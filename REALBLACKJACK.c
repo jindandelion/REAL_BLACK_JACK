@@ -17,7 +17,7 @@
 
 
 //card tray object
-int CardTray[N_CARDSET*N_CARD]; //int cardtray라는 배열 
+int CardTray[N_CARDSET*N_CARD]; 
 int cardIndex = 0;	//얘는 그냥 변수						
 
 
@@ -27,7 +27,7 @@ int dollar[N_MAX_USER];					//dollars that each player has
 	int k;
 	for(k=0;k<n_user;k++)
 	{
-		dollar[i]=50;	
+		dollar[k]=50;	
 	} 
 	printf("%d$",dollar[i]);
 	   
@@ -86,7 +86,6 @@ int getCardNum(int cardnum) {
 
 //print the card information (e.g. DiaA)
 void printCard(int cardnum) {
-	
 		
 	if(cardnum/13==0)
 		printf("♣");
@@ -171,11 +170,15 @@ int betDollar(void)
 {
 	int i;
 	
-	do{	
-	printf("How much do you want to bet?\n");//라고 물었을 때  그 플레이어가 갖고있는 돈보다 적거나같은금액을 입력해야만 한다. 
-	scanf("%d",&dollar[N_MAX_USER]);
-	}while(<dollar[N_MAX_USER]+1) 
-	}
+	printf("Your betting (total:$%d)\n",dollar[0]); 
+	scanf("%d",&bet[0]);
+	
+	bet[i]=rand()%5+1;
+	
+	for(i=1;i<n_user,i++)//int n_user에 몇명이서 플레이할건지 입력 받았는데 그냥 이렇게 쓰면 되나? 
+	{
+		printf("Player%d bets $%d (out of:$%d)\n",i,bet[i],dollar[i]); 
+	}	
 	
 }
 
@@ -206,6 +209,17 @@ void printCardInitialStatus(void) {
 }
 
 int getAction(void) {
+	int gostop;
+	printf("Action? (0-go, other-stay)");
+	scanf("%d",&gostop);
+	
+	if(gosotop=0);
+		pullCard();
+	else
+		/*다음 turn으로 넘어가*/ 
+	
+	
+		
 	
 }
 
@@ -243,12 +257,21 @@ int main(int argc, char *argv[]) {
 	int roundIndex = 0;
 	int max_user;
 	int i;
+	int roundcnt=0;
 	
 	srand((unsigned)time(NULL));
 	
 	//set the number of players
 	configUser();
+	printf("-->Card is mixed and put into the tray\n\n");
+	
+	printf("--------------------------------------------\n");
+	printf("----------Round %d (CardIndex:%d)-----------\n",roundcnt,cardIndex);
+	printf("--------------------------------------------\n");
 
+	printf("-----------------BETTING STEP---------------\n");
+	betDollar();
+	
 
 	//Game initialization --------
 	//1. players' dollar
@@ -260,7 +283,7 @@ int main(int argc, char *argv[]) {
 
 	//Game start --------
 	do {
-		
+		printf() 
 		betDollar();
 		offerCards(); //1. give cards to all the players
 		
@@ -281,7 +304,7 @@ int main(int argc, char *argv[]) {
 		
 		//result
 		checkResult();
-	} while (gameEnd == 0);
+	} while (gameEnd == 0);//이거 한번 돌때마다 roundcnt++해줘야 되는데.. 하ㅏㅏㅏ 
 	
 	checkWinner();
 	
