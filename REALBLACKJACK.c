@@ -85,8 +85,8 @@ int getCardNum(int cardnum) {
 }
 
 //print the card information (e.g. DiaA)
-void printCard(int cardnum) {
-		
+void printCard(int cardnum) { 
+	
 	if(cardnum/13==0)
 		printf("♣");
 	else if(cardnum/13==1) 
@@ -122,8 +122,8 @@ int mixCardTray(void) {
 	
 	int i;
 	 
-	int Cardtray[N_CARD];
-	for(i=0;i<N_CARD;i++)
+	int Cardtray[N_CARDSET*N_CARD];
+	for(i=0;i<N_CARDSET*N_CARD;i++)
 	{
 		Cardtray[i]=i;
 	}//배열 선언 후 각 배열에 0~51숫자를 저장해주었다. 
@@ -132,7 +132,7 @@ int mixCardTray(void) {
 	int randnum2=rand()%52;
 	
 	srand(time(NULL));
-	for(i=0;i<N_CARD;i++)
+	for(i=0;i<N_CARDSET*N_CARD;i++)
 	{
 		int temp;
 		temp=Cardtray[randnum1];
@@ -158,7 +158,9 @@ int configUser(void) {
 	do
 	{
 		printf("Input the number of players(MAX:5)\n");
-		scanf("%d",&n_user);
+		//scanf("%d",&n_user);
+		n_user=getIntegerInput();
+		//-1이 들어가있으면 사용자가 숫자아닌걸 넣은거니까.. 내가 원하는 값이 아니면 다시 넣어라ㅏ! 다시 넣어라 출력..경고메세지 넣어. 
 	}while(n_user>=6||n_user==0);
 	
 	
@@ -169,11 +171,20 @@ int configUser(void) {
 int betDollar(void)
 {
 	int i;
+	int putbet;
 	
 	printf("Your betting (total:$%d)\n",dollar[0]); 
-	scanf("%d",&bet[0]);
-	
-	bet[i]=rand()%5+1;
+	/*scanf("%d",&bet[0]);*/
+	bet[0]=getIntegerInput();
+	/*변수의 논리*/
+	/*player가 가진 값이 x보다 작으면 어떻게 해라*/ 
+	for(i=1;i<n_user;i++)
+		if(dollar[i]>5)
+			putbet=5;
+		else
+			(0<putbet||putbet<dollar[i]);/**이거 약간 putbet이 0보다 크고 dollar[i]즉 가진 자본만큼 보단 작야아된다고 하고싶은데 이게 맞나*/
+			 
+		bet[i]=rand()%putbet+1;
 	
 	for(i=1;i<n_user,i++)//int n_user에 몇명이서 플레이할건지 입력 받았는데 그냥 이렇게 쓰면 되나? 
 	{
@@ -257,7 +268,7 @@ int main(int argc, char *argv[]) {
 	int roundIndex = 0;
 	int max_user;
 	int i;
-	int roundcnt=0;
+
 	
 	srand((unsigned)time(NULL));
 	
@@ -266,7 +277,7 @@ int main(int argc, char *argv[]) {
 	printf("-->Card is mixed and put into the tray\n\n");
 	
 	printf("--------------------------------------------\n");
-	printf("----------Round %d (CardIndex:%d)-----------\n",roundcnt,cardIndex);
+	printf("----------Round %d (CardIndex:%d)-----------\n",roundIndex,cardIndex);
 	printf("--------------------------------------------\n");
 
 	printf("-----------------BETTING STEP---------------\n");
