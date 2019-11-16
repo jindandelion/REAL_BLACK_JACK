@@ -19,11 +19,11 @@
 //card tray object
 int CardTray[N_CARDSET*N_CARD]; 
 int cardIndex = 0;	//얘는 그냥 변수						
-
+int cardnum;
 
 //player info
-int dollar[N_MAX_USER];					//dollars that each player has
-{	
+int dollar[N_MAX_USER]=50;//dollars that each player has. At the beginning of the game, each player's money was initialized at $50.
+/*{	
 	int k;
 	for(k=0;k<n_user;k++)
 	{
@@ -31,7 +31,7 @@ int dollar[N_MAX_USER];					//dollars that each player has
 	} 
 	printf("%d$",dollar[i]);
 	   
-}
+}*/
 
 int n_user;									//number of users
 
@@ -81,7 +81,7 @@ int getCardNum(int cardnum) {
 		sum=cardnum+sum;
 	}while(/*********************나중에 해라!!!!!*****************************/)
 	
-	printf("sum=%d ",cardnum);
+	printf("sum=%d ",sum);
 }
 
 //print the card information (e.g. DiaA)
@@ -128,10 +128,11 @@ int mixCardTray(void) {
 		Cardtray[i]=i;
 	}//배열 선언 후 각 배열에 0~51숫자를 저장해주었다. 
 		
-	int randnum1=rand()%52;
-	int randnum2=rand()%52;
+	int randnum1=rand()%N_CARDSET*N_CARD;
+	int randnum2=rand()%N_CARDSET*N_CARD;
 	
 	srand(time(NULL));
+	
 	for(i=0;i<N_CARDSET*N_CARD;i++)
 	{
 		int temp;
@@ -140,10 +141,13 @@ int mixCardTray(void) {
 		Cardtray[randnum2]=temp;
 	}
 	
+	return Cardtray[i];//여기 반환값 뭐라해야돼;; 
 }
 
 //get one card from the tray
 int pullCard(void) {
+	
+	
 	
 	//카드를 하나씩 꺼내주는 함수 
 }
@@ -160,6 +164,8 @@ int configUser(void) {
 		printf("Input the number of players(MAX:5)\n");
 		//scanf("%d",&n_user);
 		n_user=getIntegerInput();
+		if(n_user==-1)
+			printf("Set to no more than 5 people.\n"); 
 		//-1이 들어가있으면 사용자가 숫자아닌걸 넣은거니까.. 내가 원하는 값이 아니면 다시 넣어라ㅏ! 다시 넣어라 출력..경고메세지 넣어. 
 	}while(n_user>=6||n_user==0);
 	
@@ -168,28 +174,37 @@ int configUser(void) {
 
 
 //betting
-int betDollar(void)
+int betDollar(void)/************************End*****************************/
 {
 	int i;
-	int putbet;
+	int putbet;//putbet변수는 컴퓨터player의 배팅액이 랜덤으로 배팅될때, 컴퓨터가 알맞게 배팅할 수 있도록 도와주는 변수이다. 
 	
 	printf("Your betting (total:$%d)\n",dollar[0]); 
 	/*scanf("%d",&bet[0]);*/
-	bet[0]=getIntegerInput();
+	do{
+		bet[0]=getIntegerInput();
+		if(bet[0]>dollar[0])
+			printf("You only have %d$!!!Bet Again!!!\n",dollar[0]);
+	}while(bet[0]<=dollar[0]);
+		
 	/*변수의 논리*/
 	/*player가 가진 값이 x보다 작으면 어떻게 해라*/ 
 	for(i=1;i<n_user;i++)
-		if(dollar[i]>5)
-			putbet=5;
-		else
-			(0<putbet||putbet<dollar[i]);/**이거 약간 putbet이 0보다 크고 dollar[i]즉 가진 자본만큼 보단 작야아된다고 하고싶은데 이게 맞나*/
-			 
-		bet[i]=rand()%putbet+1;
+	{
+		if(dollar[i]>N_MAX_BET)
+			putbet=N_MAX_BET;//Player의 자본이 N_MAX_BET보다  많이 남아있으면 Player의 배팅액을 랜덤으로 설정할때 N_MAX_BET 밑으로 설정한다는 뜻
+			bet[i]=rand()%putbet+1;  
+		else//Player의 자본이 N_MAX_BET보다 작게 남아 있으면 남은 모든 금액을 올인하겠다!
+			bet[i]=dollar[i]; 
+			//(0<putbet||putbet<dollar[i]);/**이거 약간 putbet이 0보다 크고 dollar[i]즉 가진 자본만큼 보단 작야아된다고 하고싶은데 이게 맞나*/
+			//bet[i]=rand()%putbet+1;
+			printf("Player%d bets $%d (out of:$%d)\n",i,bet[i],dollar[i]); 
+	}
 	
-	for(i=1;i<n_user,i++)//int n_user에 몇명이서 플레이할건지 입력 받았는데 그냥 이렇게 쓰면 되나? 
+	/*for(i=1;i<n_user,i++)//int n_user에 몇명이서 플레이할건지 입력 받았는데 그냥 이렇게 쓰면 되나? 
 	{
 		printf("Player%d bets $%d (out of:$%d)\n",i,bet[i],dollar[i]); 
-	}	
+	}	*/
 	
 }
 
@@ -255,11 +270,29 @@ int calcStepResult() {
 
 int checkResult() {
 	int i;
-	printf("---------------------ROUND i result is...",roundcounter)
-}
+	
+	printf("------------ROUND%d's result is...------------",roundIndex);
+	printf("->Your Result: %d (sum:%d)-->$%d\n",/*getCardNum()*/,dollar[0]);
+	for(i=1;i<n_user;i++)
+	{
+		printf("->Your Result: %d (sum:%d)-->$%d\n",/*getCardNum()*/,dollar[i]);
+	}
+}	
+
 
 int checkWinner() {
 	
+	
+	
+	int i;
+	
+	printf("Game End!! Your money : %d,",dollar[0]);
+	printf("Player's money:'");
+	for(i=1;i<n_user;i++)
+	{
+		printf("%d",dollar[i]);
+	}
+	//int Winner라는 전역변수를 세워주고 Winner=0,1,
 }
 
 
@@ -276,13 +309,9 @@ int main(int argc, char *argv[]) {
 	configUser();
 	printf("-->Card is mixed and put into the tray\n\n");
 	
-	printf("--------------------------------------------\n");
+/*  printf("--------------------------------------------\n");
 	printf("----------Round %d (CardIndex:%d)-----------\n",roundIndex,cardIndex);
-	printf("--------------------------------------------\n");
-
-	printf("-----------------BETTING STEP---------------\n");
-	betDollar();
-	
+	printf("--------------------------------------------\n");*/
 
 	//Game initialization --------
 	//1. players' dollar
@@ -294,7 +323,12 @@ int main(int argc, char *argv[]) {
 
 	//Game start --------
 	do {
-		printf() 
+			
+		printf("--------------------------------------------\n");
+		printf("----------Round %d (CardIndex:%d)-----------\n",roundIndex,cardIndex);
+		printf("--------------------------------------------\n");
+
+		printf("-----------------BETTING STEP---------------\n");
 		betDollar();
 		offerCards(); //1. give cards to all the players
 		
@@ -315,7 +349,8 @@ int main(int argc, char *argv[]) {
 		
 		//result
 		checkResult();
-	} while (gameEnd == 0);//이거 한번 돌때마다 roundcnt++해줘야 되는데.. 하ㅏㅏㅏ 
+		roundIndex++;
+	} while (gameEnd == 0);//이거 한번 돌때마다 roundIndex++해줘야 되는데.. 하ㅏㅏㅏ 
 	
 	checkWinner();
 	
