@@ -20,21 +20,12 @@
 int CardTray[N_CARDSET*N_CARD]; 
 int cardIndex = 0;	//얘는 그냥 변수						
 int cardnum;
+int cardnumcnt;//카드트레이에서 0부터 N_CARDSET*N_CARD-1까지 의 배열 요소 중 몇번째 까지 썼는지 카운터해주는 변수. 
 
 //player info
 int dollar[N_MAX_USER]=50;//dollars that each player has. At the beginning of the game, each player's money was initialized at $50.
-/*{	
-	int k;
-	for(k=0;k<n_user;k++)
-	{
-		dollar[k]=50;	
-	} 
-	printf("%d$",dollar[i]);
-	   
-}*/
 
 int n_user;									//number of users
-
 
 //play yard information
 int cardhold[N_MAX_USER+1][N_MAX_CARDHOLD];	//cards that currently the players hold
@@ -64,7 +55,8 @@ int getIntegerInput(void) {
 //calculate the actual card number in the blackjack game
 int getCardNum(int cardnum) {
 	
-	int sum=0;
+	int i;
+	int sum;
 
 	switch(cardnum)
 	{
@@ -81,7 +73,9 @@ int getCardNum(int cardnum) {
 		sum=cardnum+sum;
 	}while(/*********************나중에 해라!!!!!*****************************/)
 	
-	printf("sum=%d ",sum);
+	cardSum[i]=sum;
+	
+	printf("sum=%d ",cardSum[i]);
 }
 
 //print the card information (e.g. DiaA)
@@ -94,22 +88,31 @@ void printCard(int cardnum) {
 	else if(cardnum/13==2)
 		printf("♥"); 
 	else if(cardnum/13==3)
-		printf("♠");
+		printf("♠"); 
 		
 	switch(cardnum%13)
 	{
 		case 0:
 			printf("A");
+			break; 
+			
 		case 10:
 			printf("J");
+			break;
+			
 		case 11:
 			printf("Q");
+			break;
+		
 		case 12:
 			printf("K");
+			break;
+			
 		default:
 			printf("%d",(cardnum%13)+1);
+			break;
 	}
-	
+	cardIndex++;
 	return 0;
 	}
 }
@@ -141,15 +144,14 @@ int mixCardTray(void) {
 		Cardtray[randnum2]=temp;
 	}
 	
-	return Cardtray[i];//여기 반환값 뭐라해야돼;; 
 }
-
+int puca;//pullCard함수에서 반환 값이 하나 나갈때마다 배열의 다음 값이 나갈 수 있게해주는 변수를 전역변수로 설정해 주엇다. 
 //get one card from the tray
-int pullCard(void) {
+int pullCard(void) {	//카드를 하나씩 꺼내주는 함수 
 	
+	return=Cardtray[puca];
+	puca++;
 	
-	
-	//카드를 하나씩 꺼내주는 함수 
 }
 
 
@@ -164,10 +166,10 @@ int configUser(void) {
 		printf("Input the number of players(MAX:5)\n");
 		//scanf("%d",&n_user);
 		n_user=getIntegerInput();
-		if(n_user==-1)
-			printf("Set to no more than 5 people.\n"); 
+		if(n_user>=6||n_user<=0)
+			printf("***Set the number of players at least 1 to 5 or less.***\n"); 
 		//-1이 들어가있으면 사용자가 숫자아닌걸 넣은거니까.. 내가 원하는 값이 아니면 다시 넣어라ㅏ! 다시 넣어라 출력..경고메세지 넣어. 
-	}while(n_user>=6||n_user==0);
+	}while(n_user>=6||n_user<=0);
 	
 	
 }
@@ -215,7 +217,11 @@ void offerCards(void) {
 	//1. give two card for each players
 	for (i=0;i<n_user;i++)
 	{
-		cardhold[i][0] = pullCard();//첫번째 카드.카드를 나눠주는 함수를 짜면 숫자가 하나가 저장되니까, 
+		cardhold[i][0] = pullCard();//첫번째 카드.카드를 나눠주는 함수를 짜면 숫자가 하나가 저장되니까,
+		/*****************************************************************
+		pullcard가 숫자 내보내면 cardhold에 숫자가 저장되겠지?
+		그럼 printcard(cardhold[][])이런식으로 해서 카드 프린트 하는거 ㅇㅎ 
+		********************************************************************/
 	}
 	for (i=0;i<n_user;i++)
 	{
@@ -231,17 +237,38 @@ void offerCards(void) {
 
 //print initial card status
 void printCardInitialStatus(void) {
+	int i;
+	
+	printf("---------------CARD OFFERING---------------");
+	printf("-->Server       :");
+	printf("X ");
+	printCard(cardhold[n_user][1]);
+	printf("\n");
+	printf("-->You          :");
+	printCard(cardhold[0][0]);
+	printCard(cardhold[0][1]);
+	printf("\n");
+	for(i=1;i<n_user;i++)
+	{
+		printf("-->Player %d     :",i);
+		printCard(cardhold[i][0]);
+		printCard(cardhold[i][1]);
+	}
 	
 }
 
 int getAction(void) {
+	
 	int gostop;
 	printf("Action? (0-go, other-stay)");
-	scanf("%d",&gostop);
+	//scanf("%d",&gostop);
+	gostop=getIntegerInput();
 	
 	if(gosotop=0);
-		pullCard();
+		//카드를 한장 더 나눠줌 
+		
 	else
+		
 		/*다음 turn으로 넘어가*/ 
 	
 	
@@ -251,11 +278,12 @@ int getAction(void) {
 
 
 void printUserCardStatus(int user, int cardcnt) {
+	
 	int i;
 	
 	printf("   -> card : ");
 	for (i=0;i<cardcnt;i++)
-		printCard(cardhold[user][i]);//
+		printCard(cardhold[user][i]);
 	printf("\t ::: ");
 }
 
@@ -265,6 +293,15 @@ void printUserCardStatus(int user, int cardcnt) {
 // calculate the card sum and see if : 1. under 21, 2. over 21, 3. blackjack
 int calcStepResult() {
 	
+	int sum;
+	sum=getCardNum();
+	
+	if(sum==21)//x는 카드 숫자의  합 
+		printf("Black Jack! Congratulation, You Win!!\n");
+	else if(sum>21)
+		printf("DEAD[overflow!] (sum:%d)\n",sum);
+	else
+		printf("\n");
 	
 }
 
@@ -281,8 +318,6 @@ int checkResult() {
 
 
 int checkWinner() {
-	
-	
 	
 	int i;
 	
@@ -325,14 +360,15 @@ int main(int argc, char *argv[]) {
 	do {
 			
 		printf("--------------------------------------------\n");
-		printf("----------Round %d (CardIndex:%d)-----------\n",roundIndex,cardIndex);
+		printf("----------Round %d (Card Index:%d)-----------\n",roundIndex,cardIndex);
 		printf("--------------------------------------------\n");
 
 		printf("-----------------BETTING STEP---------------\n");
 		betDollar();
+		printf("--------------------------------------------\n"); 
 		offerCards(); //1. give cards to all the players
-		
 		printCardInitialStatus();
+		
 		printf("\n------------------ GAME start --------------------------\n");
 		
 		//each player's turn
