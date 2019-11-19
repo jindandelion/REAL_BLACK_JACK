@@ -21,11 +21,12 @@ int CardTray[N_CARDSET*N_CARD];
 int cardIndex = 0;	//얘는 그냥 변수						
 int cardnum;
 int cardnumcnt;//카드트레이에서 0부터 N_CARDSET*N_CARD-1까지 의 배열 요소 중 몇번째 까지 썼는지 카운터해주는 변수. 
-int cardcnt;//각 player가 갖고있는 카드의 갯수가 몇개인지 세주는 변수. 
+//int cardcnt;//각 player가 갖고있는 카드의 갯수가 몇개인지 세주는 변수. 
+int cardcnt[N_MAX_USER]={2,2,2,2,2};//cardcount++Pullcard한번 받을 때 마다 이렇게 해줌. 
 
 //player info
 int dollar[N_MAX_USER]={50,50,50,50,50};//dollars that each player has. At the beginning of the game, each player's money was initialized at $50.
-	
+int user;
 int n_user;								//number of users
 
 //play yard information
@@ -84,6 +85,7 @@ int getCardNum(int cardnum) {
 	
 	printf("sum=%d ",cardSum[i]);*///-->이건 다른 함수에서 해도 괜찮지 않을까? 
 }
+/***************************************
 int Card_Sum(cardnum){
 	
 	int i;
@@ -91,13 +93,24 @@ int Card_Sum(cardnum){
 	int sumofcard;
 	
 	if(j=1)
-		for(i=1;i</**/;i++)
+		for(i=1;i</********\;i++)
 			getCardNum(cardhold[1][i]);
 			sumofcard=sumofcard+getCardNum(cardhold[1][i]);
-		
-		
-	return sumofcard;
+			******************************************************************************/
+void calcardsum(int cardnum){//A function that calculates the sum of the cards.
+	
+	int i;
+	int sum;
+	for(i=0;i<cardcnt;i++)
+	{
+		sum=sum+cardhold[cardnum][i];//여기에 앞서 PullCard의 정수 반환값을 저장해주었으니까
+	}
+	
+	cardSum[cardnum]=sum;
+	
+	return 0;
 } 
+		
 //print the card information (e.g. DiaA)
 void printCard(int cardnum) { //cardnum이라는 값이 곧 Cardtray[i]라는 배열에 저장 된 값 
 	
@@ -135,6 +148,7 @@ void printCard(int cardnum) { //cardnum이라는 값이 곧 Cardtray[i]라는 배열에 저�
 	cardIndex++;//이걸 이렇게 하면 안될 것 같기도 하고.. 
 	
 }
+
 
 
 //card array controllers -------------------------------
@@ -286,8 +300,7 @@ void printCardInitialStatus(void) {
 	}//이건 컴퓨터의 카드들 이다. 
 	
 }
-int user;
-int cardcnt;
+
 
 int getAction(void) {
 	
@@ -307,12 +320,10 @@ int getAction(void) {
 	
 }
 
-int getActionPlayer(void){
+int getActionPlayer(int 몇번째 player인지 받아줘.){
 	
-	int Pgostop;//This variable saves the player's gostop status.
-	
-	플레이어의 카드합 
-	
+	int gostop;//This variable saves the player's gostop status.
+	calcardsum(n_user)
 	
 }
 
@@ -332,32 +343,27 @@ void printUserCardStatus(int user, int cardcnt) {
 	cardcnt[user]++;
 }
 
-int cardcnt[N_MAX_USER]={2,2,2,2,2};//cardcount++Pullcard한번 받을 때 마다 이렇게 해줌. 
-
-
 // calculate the card sum and see if : 1. under 21, 2. over 21, 3. blackjack
-int calcStepResult() {
+
+// 이 함수를 쓰기 전에 꼭 calcardsum함수를 먼저 불러줘야돼! 
+int calcStepResult(int cardnum) {
 	
-	int sum;
-	int i;
-	//여기서 숫자합까지 다 계산 해서 sum값을 만들면됌  
-	
-	//getCardNum(cardhold[][]);
-	
-	if(sum==21)//x는 카드 숫자의  합 
+	if(cardcnt==2&&cardSum[cardnum]==21)
 		printf("Black Jack! Congratulation, You Win!!\n");
-	else if(sum>21)
-		printf("DEAD[overflow!] (sum:%d)\n",sum);
+		
+	else if(cardSum[cardnum]>21)
+		printf("DEAD[overflow!] (sum:%d)\n",cardSum[cardnum]);
+		
 	else
 		printf("\n");
-		
-	//int cardSum[N_MAX_USER]합은 이 배열에다 저장을 해줌. 
 	
+	//int cardSum[N_MAX_USER]합은 이 배열에다 저장을 해줌. 
 }
 
 int checkResult(int n_user) {
 	
 	int i;
+	
 	if(cardSum[n_user]>21)
 		printf("[[[[[Server Result is .....overflow!!]]]]]\n");
 	else if(cardcount[n_user]==2&&cardSum[n_user==21])//두장의 카드 더했을 때 21이여야지 블랙잭이니깐 어 x[n_user][0]+x[n_user][1]==21 이렇게 바꿔줘야 
@@ -367,19 +373,40 @@ int checkResult(int n_user) {
 		
 		
 	printf("------------ROUND%d's result is...------------",roundIndex);
-	printf("->Your Result: %d (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+	if(cardSum[0]==21&&cardcnt[0]==2)//if player is blackjack,
+		dollar[0]=dollar[0]+(bet[0]*2);
+		printf("->Your Result: BLACKJACK! Congratulations!(sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+		
+	else if(cardSum[n_user]>21&&cardSum[0]<22)//if dealer is overflow.
+		dollar[0]=dollar[0];
+		printf("->Your Result: WIN!! Server is overflow. (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+	
+	else if(cardSum[n_user]==21&&cardcnt[n_user]==2&&cardSum[0]!=21&&cardcnt[0]!=2)//If the dealer is blackjack, player loses the betting amount.
+		dollar[0]=dollar[0]-bet[0];//근데 player가 먼저 블랙잭이면 break;다른 곳에서 해줘야됌. 
+		printf("->Your Result: Lose! Server is BLACKJACK! (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+
+	else if(cardSum[0]>cardSum[n_user]&&cardSum[0]<=21)//if user is win
+		dollar[0]=dollar[0]+bet[0];
+		printf("->Your Result: WIN! (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+	
 	for(i=1;i<n_user;i++)
 	{
 		printf("->%d'th Player's Result:",i);
-		if(cardSum[n_user]>cardSum[i])
-			dollar[i]=dollar[i]-bet[i];
-			printf("lose! (sum:%d) --> $%d \n",cardSum[i],dollar[i]);
-		
-		else if(cardSum[i]==21)
+		if(cardSum[i]==21&&cardcnt[i]==2)
 			dollar[i]=dollar[i]+(bet[i]*2);
 			printf("Black Jack! (sum:%d) --> $%d \n",cardSum[i],dollar[i]);
 			
-		else if(cardSum[n_user]<cardSum[i])
+		else if(cardSum[n_user]>21&&cardSum[i]<22)
+			dollar[i]=dollar[i]+(bet[i]*2);
+			printf(" Win! Server is overflow! (sum:%d) --> $%d \n",cardSum[i],dollar[i]);
+			
+		else if(cardSum[n_user]==21&&cardcnt[n_user]==2&&cardSum[i]!=21&&cardcnt[i]!=2)
+			dollar[i]=dollar[i]-bet[i];
+			printf("lose! Server is BLACKJACK! (sum:%d) --> $%d \n",cardSum[i],dollar[i]);
+		
+		else if(cardSum[n_user]<cardSum[i]&&cardSum[i]<=21)
+			dollar[i]=dollar[i]+bet[i];
+			printf("WIN! (sum:%d) --> $%d \n",cardSum[i],dollar[i]);
 			
 	}
 }	
@@ -439,9 +466,9 @@ int main(int argc, char *argv[]) {
 		printCardInitialStatus();
 		
 		printf("\n---------------- GAME start ----------------\n");
-		//each player's turn
+		//user turn
 		printf(">>>My Turn!----------\n");
-		printUserCardStatus(0,cardcnt);//처음 받은 두장의 카드를 찍어준다. 
+		printUserCardStatus(0,cardcnt[0]);//처음 받은 두장의 카드를 찍어준다. 
 		while(getAction==1)
 		{
 			getAction();
@@ -449,12 +476,13 @@ int main(int argc, char *argv[]) {
 			cardhold[0][cardcnt]=pullCard();
 			cardcnt[0]++;
 		}
-		
+		//each player's turn
 		for (i=1;i<n_user;i++) //each player
 		{
-			while () //do until the player dies or player says stop
+			printf("Player %d Turn!-------------------\n",i);
+			while (getAction==0) //do until the player dies or player says stop
 			{
-				printUserCardStatus();//print current card status printUserCardStatus();
+				printUserCardStatus(i,cardcnt[i]);//print current card status printUserCardStatus();
 				//check the card status ::: calcStepResult()
 				while(getAction()==0)
 				{//GO? STOP? ::: getAction()
@@ -465,6 +493,7 @@ int main(int argc, char *argv[]) {
 			}
 			
 		}//이 for문은 컴퓨터들이 돌릴때 쓸거임. 
+		//Server's turn.
 		
 		//result
 		checkResult();

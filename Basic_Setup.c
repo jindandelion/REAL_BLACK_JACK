@@ -33,3 +33,32 @@ int getAction(void) {
 		return 1;	
 	
 }
+void calcardsum(int cardnum){//A function that calculates the sum of the cards.
+	
+	int i;
+	int sum;
+	for(i=0;i<cardcnt;i++)
+	{
+		sum=sum+cardhold[cardnum][i];//여기에 앞서 PullCard의 정수 반환값을 저장해주었으니까
+	}
+	
+	cardSum[cardnum]=sum;
+	
+	return 0;
+} 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
