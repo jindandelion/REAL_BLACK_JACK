@@ -66,4 +66,31 @@ int mixCardTray(void) {
 		Cardtray[randnum2]=temp;
 	}
 	
+int puca;//pullCard함수에서 반환 값이 하나 나갈때마다 배열의 다음 값이 나갈 수 있게해주는 변수를 전역변수로 설정해 주엇다. 
+//get one card from the tray
+int pullCard(void) {	//카드를 하나씩 꺼내주는 함수 
+	
+	int result;
+	result=CardTray[puca];
+	puca++;
+	cardIndex++;
+	return result;
+	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

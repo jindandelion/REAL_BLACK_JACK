@@ -12,7 +12,7 @@ void printUserCardStatus(int user, int cardcnt) {
 	}
 	
 	printf("\t ::: ");
-	cardcnt[user]++;
+
 }
 int cardcnt[N_MAX_USER]={2,2,2,2,2};
 
@@ -26,11 +26,18 @@ int getAction(void) {
 	//while문을 돌려서 그 gostop의 값이 0이면 while안에 for문 넣어서 돌려.  
 	if(gostop==0)
 	{
-		cardcnt++;
+		cardcnt[0]++;//0번째 사용자 즉, user가 가지고 있는 카드의 수. 
 		return 0;
 	}
 	else
 		return 1;	
+	
+}
+int getActionPlayer(int n_user){
+	
+	int gostop;//This variable saves the player's gostop status.
+	calcardsum(n_user);//The sum of the cards for the i-th user will be calculated.
+	if(calcardsum(n_user))
 	
 }
 void calcardsum(int cardnum){//A function that calculates the sum of the cards.

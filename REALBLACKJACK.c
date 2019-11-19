@@ -312,7 +312,7 @@ int getAction(void) {
 	//while문을 돌려서 그 gostop의 값이 0이면 while안에 for문 넣어서 돌려.  
 	if(gostop==0)
 	{
-		cardcnt++;
+		cardcnt[0]++;
 		return 0;
 	}
 	else
@@ -323,7 +323,7 @@ int getAction(void) {
 int getActionPlayer(int 몇번째 player인지 받아줘.){
 	
 	int gostop;//This variable saves the player's gostop status.
-	calcardsum(n_user)
+	calcardsum(n_user);
 	
 }
 
@@ -340,7 +340,6 @@ void printUserCardStatus(int user, int cardcnt) {
 		printCard(cardhold[user][i]);
 
 	printf("\t ::: ");
-	cardcnt[user]++;
 }
 
 // calculate the card sum and see if : 1. under 21, 2. over 21, 3. blackjack
@@ -431,7 +430,9 @@ int main(int argc, char *argv[]) {
 	int roundIndex = 0;
 	int max_user;
 	int i;
-
+	int k;
+	int j;
+	j=2;
 	
 	srand((unsigned)time(NULL));
 	
@@ -453,6 +454,10 @@ int main(int argc, char *argv[]) {
 
 	//Game start --------
 	do {
+		//Each time Round starts anew, the variable cardcnt, which refers to the number of cards each player has, is reset to 2.
+		for(k=0;k<n_user;k++)
+			cardcnt[k]={2,2,2,2,2};
+
 			
 		printf("--------------------------------------------\n");
 		printf("----------Round %d (Card Index:%d)-----------\n",roundIndex,cardIndex);
@@ -469,17 +474,21 @@ int main(int argc, char *argv[]) {
 		//user turn
 		printf(">>>My Turn!----------\n");
 		printUserCardStatus(0,cardcnt[0]);//처음 받은 두장의 카드를 찍어준다. 
+		getAction(); //Ask go or stop.
 		while(getAction==1)
 		{
-			getAction();
-			
-			cardhold[0][cardcnt]=pullCard();
-			cardcnt[0]++;
+			cardhold[0][j]=pullCard();//I called function pullCard so, it will be cardcnt++.
+			j++;	
+			printUserCardStatus(0,cardcnt[0]);
+			getActioin();		
 		}
+		
 		//each player's turn
 		for (i=1;i<n_user;i++) //each player
 		{
 			printf("Player %d Turn!-------------------\n",i);
+			printUserCardStatus(i,cardcnt[i]); 
+			getActionPlayer(i);
 			while (getAction==0) //do until the player dies or player says stop
 			{
 				printUserCardStatus(i,cardcnt[i]);//print current card status printUserCardStatus();
