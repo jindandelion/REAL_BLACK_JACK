@@ -21,10 +21,12 @@ int CardTray[N_CARDSET*N_CARD];
 int cardIndex = 0;	//얘는 그냥 변수						
 int cardnum;
 int cardnumcnt;//카드트레이에서 0부터 N_CARDSET*N_CARD-1까지 의 배열 요소 중 몇번째 까지 썼는지 카운터해주는 변수. 
+int cardcnt;//각 player가 갖고있는 카드의 갯수가 몇개인지 세주는 변수. 
 
 //player info
-int dollar[N_MAX_USER]=50;//dollars that each player has. At the beginning of the game, each player's money was initialized at $50.
+int dollar[N_MAX_USER]={50,50,50,50,50};//dollars that each player has. At the beginning of the game, each player's money was initialized at $50.
 
+	
 int n_user;									//number of users
 
 //play yard information
@@ -56,30 +58,35 @@ int getIntegerInput(void) {
 int getCardNum(int cardnum) {
 	
 	int i;
-	int sum;
 
-	switch(cardnum)
+	switch(cardnum%13)
 	{
-		case 0;
-			cardnum=1
-		case 10,11,12;
+		case 0:
+			cardnum=1;//또는 11 .여기 안에다 if문 써도 되는건가? 쓰면 if(CardSum+11>21) cardnum=1; else cardnum=11 
+			break;
+		case 10:
+		case 11:
+		case 12:
 			cardnum=10;
-		default;
+			break;
+		default:
 			cardnum=cardnum+1;
 		
 	}
-	do
+	
+	return cardnum; 
+	/*do
 	{
 		sum=cardnum+sum;
-	}while(/*********************나중에 해라!!!!!*****************************/)
+	}while(/*********************나중에 해라!!!!!*****************************/
 	
-	cardSum[i]=sum;
+	/*cardSum[i]=sum;
 	
-	printf("sum=%d ",cardSum[i]);
+	printf("sum=%d ",cardSum[i]);*///-->이건 다른 함수에서 해도 괜찮지 않을까? 
 }
 
 //print the card information (e.g. DiaA)
-void printCard(int cardnum) { 
+void printCard(int cardnum) { //cardnum이라는 값이 곧 Cardtray[i]라는 배열에 저장 된 값 
 	
 	if(cardnum/13==0)
 		printf("♣");
@@ -93,65 +100,71 @@ void printCard(int cardnum) {
 	switch(cardnum%13)
 	{
 		case 0:
-			printf("A");
+			printf("A ");
 			break; 
 			
 		case 10:
-			printf("J");
+			printf("J ");
 			break;
 			
 		case 11:
-			printf("Q");
+			printf("Q ");
 			break;
 		
 		case 12:
-			printf("K");
+			printf("K ");
 			break;
 			
 		default:
-			printf("%d",(cardnum%13)+1);
+			printf("%d ",(cardnum%13)+1);
 			break;
 	}
-	cardIndex++;
-	return 0;
-	}
+	cardIndex++;//이걸 이렇게 하면 안될 것 같기도 하고.. 
+	
 }
 
 
 //card array controllers -------------------------------
 
 //mix the card sets and put in the array
+void swap(int*x,int*y)
+{
+	int temp;
+	temp=*x;
+	*x=*y;
+	*y=temp;
+}
+
 int mixCardTray(void) {
 	
-	int i;
-	 
-	int Cardtray[N_CARDSET*N_CARD];
+	int i=0;
+	
+	srand((unsigned)time(NULL));
+	
 	for(i=0;i<N_CARDSET*N_CARD;i++)
 	{
-		Cardtray[i]=i;
+		CardTray[i]=i;
 	}//배열 선언 후 각 배열에 0~51숫자를 저장해주었다. 
-		
-	int randnum1=rand()%N_CARDSET*N_CARD;
-	int randnum2=rand()%N_CARDSET*N_CARD;
-	
-	srand(time(NULL));
 	
 	for(i=0;i<N_CARDSET*N_CARD;i++)
+		swap(&CardTray[i],&CardTray[rand()%(N_CARDSET*N_CARD)]);
+	
+	/*for(i=0;i<N_CARDSET*N_CARD;i++)
 	{
-		int temp;
 		temp=Cardtray[randnum1];
 		Cardtray[randnum1]=Cardtray[randnum2];
 		Cardtray[randnum2]=temp;
-	}
+	}*/
 	
 }
 int puca;//pullCard함수에서 반환 값이 하나 나갈때마다 배열의 다음 값이 나갈 수 있게해주는 변수를 전역변수로 설정해 주엇다. 
 //get one card from the tray
 int pullCard(void) {	//카드를 하나씩 꺼내주는 함수 
 	
-	return=Cardtray[puca];
+	int result;
+	result=CardTray[puca];
 	puca++;
-	
+	return result;
 }
 
 
@@ -170,10 +183,8 @@ int configUser(void) {
 			printf("***Set the number of players at least 1 to 5 or less.***\n"); 
 		//-1이 들어가있으면 사용자가 숫자아닌걸 넣은거니까.. 내가 원하는 값이 아니면 다시 넣어라ㅏ! 다시 넣어라 출력..경고메세지 넣어. 
 	}while(n_user>=6||n_user<=0);
-	
-	
+		
 }
-
 
 //betting
 int betDollar(void)/************************End*****************************/
@@ -194,10 +205,14 @@ int betDollar(void)/************************End*****************************/
 	for(i=1;i<n_user;i++)
 	{
 		if(dollar[i]>N_MAX_BET)
-			putbet=N_MAX_BET;//Player의 자본이 N_MAX_BET보다  많이 남아있으면 Player의 배팅액을 랜덤으로 설정할때 N_MAX_BET 밑으로 설정한다는 뜻
+		{
+				putbet=N_MAX_BET;//Player의 자본이 N_MAX_BET보다  많이 남아있으면 Player의 배팅액을 랜덤으로 설정할때 N_MAX_BET 밑으로 설정한다는 뜻
 			bet[i]=rand()%putbet+1;  
+		}
 		else//Player의 자본이 N_MAX_BET보다 작게 남아 있으면 남은 모든 금액을 올인하겠다!
+		{
 			bet[i]=dollar[i]; 
+		}
 			//(0<putbet||putbet<dollar[i]);/**이거 약간 putbet이 0보다 크고 dollar[i]즉 가진 자본만큼 보단 작야아된다고 하고싶은데 이게 맞나*/
 			//bet[i]=rand()%putbet+1;
 			printf("Player%d bets $%d (out of:$%d)\n",i,bet[i],dollar[i]); 
@@ -242,48 +257,53 @@ void printCardInitialStatus(void) {
 	printf("---------------CARD OFFERING---------------");
 	printf("-->Server       :");
 	printf("X ");
-	printCard(cardhold[n_user][1]);
+	printCard(cardhold[n_user][1]);//n_user 즉, 만약 n_user에 3이 입력이 됬을 때 [0]은 사용자의 카드,[1]은 player[1]의 카드 [3]은 딜러의카드이다. 
 	printf("\n");
 	printf("-->You          :");
 	printCard(cardhold[0][0]);
-	printCard(cardhold[0][1]);
+	printCard(cardhold[0][1]);//즉 이건 사용자의 카드 
 	printf("\n");
 	for(i=1;i<n_user;i++)
 	{
 		printf("-->Player %d     :",i);
 		printCard(cardhold[i][0]);
 		printCard(cardhold[i][1]);
-	}
+	}//이건 컴퓨터의 카드들 이다. 
 	
 }
+int user;
+int cardcnt;
 
 int getAction(void) {
 	
 	int gostop;
+	
 	printf("Action? (0-go, other-stay)");
 	//scanf("%d",&gostop);
 	gostop=getIntegerInput();
 	
-	if(gosotop=0);
-		//카드를 한장 더 나눠줌 
-		
+	if(gostop==0)
+	{
+		cardcnt++;
+		return 0;
+	}
 	else
-		
-		/*다음 turn으로 넘어가*/ 
-	
-	
-		
+		return 1;	
 	
 }
 
 
 void printUserCardStatus(int user, int cardcnt) {
+	//그냥 cardcnt라는 변수가 왜 필요한건지 모르겠
+	//가지고 있는 카드 개수만큼 프린트를 해줘여 되니까
 	
 	int i;
 	
 	printf("   -> card : ");
+	
 	for (i=0;i<cardcnt;i++)
 		printCard(cardhold[user][i]);
+		
 	printf("\t ::: ");
 }
 
@@ -294,7 +314,9 @@ void printUserCardStatus(int user, int cardcnt) {
 int calcStepResult() {
 	
 	int sum;
-	sum=getCardNum();
+	int i;
+	//여기서 숫자합까지 다 계산 해서 sum값을 만들면됌  
+	getCardNum(CardTray[i]);
 	
 	if(sum==21)//x는 카드 숫자의  합 
 		printf("Black Jack! Congratulation, You Win!!\n");
@@ -302,17 +324,36 @@ int calcStepResult() {
 		printf("DEAD[overflow!] (sum:%d)\n",sum);
 	else
 		printf("\n");
+		
+	//int cardSum[N_MAX_USER]합은 이 배열에다 저장을 해줌. 
 	
 }
 
 int checkResult() {
 	int i;
-	
+	if(cardSum[n_user]>21)
+		printf("[[[[[Server Result is .....overflow!!]]]]]\n");
+	else if(//cardSum[n_user==21])//두장의 카드 더했을 때 21이여야지 블랙잭이니깐 어 x[n_user][0]+x[n_user][1]==21 이렇게 바꿔줘야 
+		printf("[[[[[Server Result is .....Black Jack!!]]]]]\n");
+	else
+		printf("[[[[[Server Result is .....%d!!]]]]]\n",cardSum[n_user]);
+		
+		
 	printf("------------ROUND%d's result is...------------",roundIndex);
-	printf("->Your Result: %d (sum:%d)-->$%d\n",/*getCardNum()*/,dollar[0]);
+	printf("->Your Result: %d (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
 	for(i=1;i<n_user;i++)
 	{
-		printf("->Your Result: %d (sum:%d)-->$%d\n",/*getCardNum()*/,dollar[i]);
+		printf("->%d'th Player's Result:",i);
+		if(cardSum[n_user]>cardSum[i])
+			dollar[i]=dollar[i]-bet[i];
+			printf("lose! (sum:%d) --> $%d \n",cardSum[i],dollar[i]);
+		
+		else if(cardSum[i]==21)
+			dollar[i]=dollar[i]+(bet[i]*2);
+			printf("Black Jack! (sum:%d) --> $%d \n",cardSum[i],dollar[i]);
+			
+		else if(cardSum[n_user]<cardSum[i])
+			
 	}
 }	
 
@@ -369,18 +410,22 @@ int main(int argc, char *argv[]) {
 		offerCards(); //1. give cards to all the players
 		printCardInitialStatus();
 		
-		printf("\n------------------ GAME start --------------------------\n");
-		
+		printf("\n---------------- GAME start ----------------\n");
 		//each player's turn
 		for () //each player
 		{
 			while () //do until the player dies or player says stop
 			{
-				//print current card status printUserCardStatus();
+				printUserCardStatus();//print current card status printUserCardStatus();
 				//check the card status ::: calcStepResult()
 				//GO? STOP? ::: getAction()
+				if(getAction()==0)
+					//printCard(cardhold[0][0]);
+					//printCard(cardhold[0][1]);
+					//printUserCardStatus(i,cardcnt);
 				//check if the turn ends or not
 			}
+			cardcnt=2;
 		}
 		
 		//result
