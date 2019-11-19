@@ -25,9 +25,8 @@ int cardcnt;//각 player가 갖고있는 카드의 갯수가 몇개인지 세주는 변수.
 
 //player info
 int dollar[N_MAX_USER]={50,50,50,50,50};//dollars that each player has. At the beginning of the game, each player's money was initialized at $50.
-
 	
-int n_user;									//number of users
+int n_user;								//number of users
 
 //play yard information
 int cardhold[N_MAX_USER+1][N_MAX_CARDHOLD];	//cards that currently the players hold
@@ -62,7 +61,8 @@ int getCardNum(int cardnum) {
 	switch(cardnum%13)
 	{
 		case 0:
-			cardnum=1;//또는 11 .여기 안에다 if문 써도 되는건가? 쓰면 if(CardSum+11>21) cardnum=1; else cardnum=11 
+			
+			cardnum=11;//또는 11 .여기 안에다 if문 써도 되는건가? 쓰면 if(CardSum+11>21) cardnum=1; else cardnum=11 
 			break;
 		case 10:
 		case 11:
@@ -73,7 +73,7 @@ int getCardNum(int cardnum) {
 			cardnum=cardnum+1;
 		
 	}
-	
+	//getcardnum에서 return을 11로하고  만약에 CardSum이 21이 넘으면 그때 10을 빼주는것. 
 	return cardnum; 
 	/*do
 	{
@@ -84,7 +84,20 @@ int getCardNum(int cardnum) {
 	
 	printf("sum=%d ",cardSum[i]);*///-->이건 다른 함수에서 해도 괜찮지 않을까? 
 }
-
+int Card_Sum(cardnum){
+	
+	int i;
+	int j;
+	int sumofcard;
+	
+	if(j=1)
+		for(i=1;i</**/;i++)
+			getCardNum(cardhold[1][i]);
+			sumofcard=sumofcard+getCardNum(cardhold[1][i]);
+		
+		
+	return sumofcard;
+} 
 //print the card information (e.g. DiaA)
 void printCard(int cardnum) { //cardnum이라는 값이 곧 Cardtray[i]라는 배열에 저장 된 값 
 	
@@ -164,7 +177,9 @@ int pullCard(void) {	//카드를 하나씩 꺼내주는 함수
 	int result;
 	result=CardTray[puca];
 	puca++;
+	cardIndex++;
 	return result;
+	
 }
 
 
@@ -232,7 +247,7 @@ void offerCards(void) {
 	//1. give two card for each players
 	for (i=0;i<n_user;i++)
 	{
-		cardhold[i][0] = pullCard();//첫번째 카드.카드를 나눠주는 함수를 짜면 숫자가 하나가 저장되니까,
+		cardhold[i][0] = pullCard();
 		/*****************************************************************
 		pullcard가 숫자 내보내면 cardhold에 숫자가 저장되겠지?
 		그럼 printcard(cardhold[][])이런식으로 해서 카드 프린트 하는거 ㅇㅎ 
@@ -247,6 +262,7 @@ void offerCards(void) {
 	cardhold[n_user][0] = pullCard();
 	cardhold[n_user][1] = pullCard();
 	
+	
 	return;
 }
 
@@ -254,7 +270,6 @@ void offerCards(void) {
 void printCardInitialStatus(void) {
 	int i;
 	
-	printf("---------------CARD OFFERING---------------");
 	printf("-->Server       :");
 	printf("X ");
 	printCard(cardhold[n_user][1]);//n_user 즉, 만약 n_user에 3이 입력이 됬을 때 [0]은 사용자의 카드,[1]은 player[1]의 카드 [3]은 딜러의카드이다. 
@@ -281,7 +296,7 @@ int getAction(void) {
 	printf("Action? (0-go, other-stay)");
 	//scanf("%d",&gostop);
 	gostop=getIntegerInput();
-	
+	//while문을 돌려서 그 gostop의 값이 0이면 while안에 for문 넣어서 돌려.  
 	if(gostop==0)
 	{
 		cardcnt++;
@@ -289,6 +304,15 @@ int getAction(void) {
 	}
 	else
 		return 1;	
+	
+}
+
+int getActionPlayer(void){
+	
+	int Pgostop;//This variable saves the player's gostop status.
+	
+	플레이어의 카드합 
+	
 	
 }
 
@@ -303,11 +327,12 @@ void printUserCardStatus(int user, int cardcnt) {
 	
 	for (i=0;i<cardcnt;i++)
 		printCard(cardhold[user][i]);
-		
+
 	printf("\t ::: ");
+	cardcnt[user]++;
 }
 
-
+int cardcnt[N_MAX_USER]={2,2,2,2,2};//cardcount++Pullcard한번 받을 때 마다 이렇게 해줌. 
 
 
 // calculate the card sum and see if : 1. under 21, 2. over 21, 3. blackjack
@@ -316,7 +341,8 @@ int calcStepResult() {
 	int sum;
 	int i;
 	//여기서 숫자합까지 다 계산 해서 sum값을 만들면됌  
-	getCardNum(CardTray[i]);
+	
+	//getCardNum(cardhold[][]);
 	
 	if(sum==21)//x는 카드 숫자의  합 
 		printf("Black Jack! Congratulation, You Win!!\n");
@@ -329,11 +355,12 @@ int calcStepResult() {
 	
 }
 
-int checkResult() {
+int checkResult(int n_user) {
+	
 	int i;
 	if(cardSum[n_user]>21)
 		printf("[[[[[Server Result is .....overflow!!]]]]]\n");
-	else if(//cardSum[n_user==21])//두장의 카드 더했을 때 21이여야지 블랙잭이니깐 어 x[n_user][0]+x[n_user][1]==21 이렇게 바꿔줘야 
+	else if(cardcount[n_user]==2&&cardSum[n_user==21])//두장의 카드 더했을 때 21이여야지 블랙잭이니깐 어 x[n_user][0]+x[n_user][1]==21 이렇게 바꿔줘야 
 		printf("[[[[[Server Result is .....Black Jack!!]]]]]\n");
 	else
 		printf("[[[[[Server Result is .....%d!!]]]]]\n",cardSum[n_user]);
@@ -406,32 +433,43 @@ int main(int argc, char *argv[]) {
 
 		printf("-----------------BETTING STEP---------------\n");
 		betDollar();
-		printf("--------------------------------------------\n"); 
+		printf("--------------------------------------------\n\n");
+		printf("----------------CARD OFFERING---------------\n");
 		offerCards(); //1. give cards to all the players
 		printCardInitialStatus();
 		
 		printf("\n---------------- GAME start ----------------\n");
 		//each player's turn
-		for () //each player
+		printf(">>>My Turn!----------\n");
+		printUserCardStatus(0,cardcnt);//처음 받은 두장의 카드를 찍어준다. 
+		while(getAction==1)
+		{
+			getAction();
+			
+			cardhold[0][cardcnt]=pullCard();
+			cardcnt[0]++;
+		}
+		
+		for (i=1;i<n_user;i++) //each player
 		{
 			while () //do until the player dies or player says stop
 			{
 				printUserCardStatus();//print current card status printUserCardStatus();
 				//check the card status ::: calcStepResult()
-				//GO? STOP? ::: getAction()
-				if(getAction()==0)
+				while(getAction()==0)
+				{//GO? STOP? ::: getAction()
 					//printCard(cardhold[0][0]);
 					//printCard(cardhold[0][1]);
-					//printUserCardStatus(i,cardcnt);
+				}	//printUserCardStatus(i,cardcnt);
 				//check if the turn ends or not
 			}
-			cardcnt=2;
-		}
+			
+		}//이 for문은 컴퓨터들이 돌릴때 쓸거임. 
 		
 		//result
 		checkResult();
 		roundIndex++;
-	} while (gameEnd == 0);//이거 한번 돌때마다 roundIndex++해줘야 되는데.. 하ㅏㅏㅏ 
+	} while (cardIndex==N_CARDSET*N_CARD);//이거 한번 돌때마다 roundIndex++해줘야돼. 
 	
 	checkWinner();
 	
