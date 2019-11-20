@@ -37,12 +37,16 @@ int getActionPlayer(int n_user){
 	
 	calcardsum(n_user);//The sum of the cards for the i-th user will be calculated.
 	if(calcardsum(n_user)<=17)//무조건 go함. 
-		cardcnt[n_user]++;
-		return 1;
+		{
+			cardcnt[n_user]++;
+			return 1;	
+		}
 		
 	else
-		printf("STAY!\n"); 
-		return 2; 
+		{
+			printf("STAY!\n"); 
+			return 2; 
+		}
 		
 	
 	

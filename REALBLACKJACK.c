@@ -100,20 +100,20 @@ int Card_Sum(cardnum){
 			sumofcard=sumofcard+getCardNum(cardhold[1][i]);
 			******************************************************************************/
 //A function that calculates the sum of the cards.
-void calcardsum(int cardnum){
+int calcardsum(int user){
 	
 	int i;
 	int sum;
-	for(i=0;i<cardcnt;i++)
+	for(i=0;i<cardcnt[user];i++)
 	{
-		sum=sum+cardhold[cardnum][i];//여기에 앞서 PullCard의 정수 반환값을 저장해주었으니까
+		sum=sum+cardhold[user][i];//여기에 앞서 PullCard의 정수 반환값을 저장해주었으니까
 	}
 	
-	cardSum[cardnum]=sum;
+	cardSum[user]=sum;
 	
-	return 0;
+	return cardSum[user];
 } 
-		
+	
 //print the card information (e.g. DiaA)
 void printCard(int cardnum) { //cardnum이라는 값이 곧 Cardtray[i]라는 배열에 저장 된 값 
 	
@@ -157,7 +157,7 @@ void printCard(int cardnum) { //cardnum이라는 값이 곧 Cardtray[i]라는 배열에 저�
 //card array controllers -------------------------------
 
 //mix the card sets and put in the array
-void swap(int*x,int*y)
+void swap(int* x,int* y)
 {
 	int temp;
 	temp=*x;
@@ -187,6 +187,7 @@ int mixCardTray(void) {
 	}*/
 	
 }
+
 int puca;//pullCard함수에서 반환 값이 하나 나갈때마다 배열의 다음 값이 나갈 수 있게해주는 변수를 전역변수로 설정해 주엇다. 
 //get one card from the tray
 int pullCard(void) {
@@ -218,20 +219,23 @@ int configUser(void) {
 	}while(n_user>=6||n_user<=0);
 		
 }
-
+	
 //betting
-int betDollar(void)/************************End*****************************/
+int betDollar(void)
 {
 	int i;
 	int putbet;//putbet변수는 컴퓨터player의 배팅액이 랜덤으로 배팅될때, 컴퓨터가 알맞게 배팅할 수 있도록 도와주는 변수이다. 
 	
 	printf("Your betting (total:$%d)\n",dollar[0]); 
+	
 	/*scanf("%d",&bet[0]);*/
 	do{
 		bet[0]=getIntegerInput();
+		
 		if(bet[0]>dollar[0])
 			printf("You only have %d$!!!Bet Again!!!\n",dollar[0]);
-	}while(bet[0]<=dollar[0]);
+			
+	}while(bet[0]>dollar[0]);
 		
 	/*변수의 논리*/
 	/*player가 가진 값이 x보다 작으면 어떻게 해라*/ 
@@ -239,7 +243,7 @@ int betDollar(void)/************************End*****************************/
 	{
 		if(dollar[i]>N_MAX_BET)
 		{
-				putbet=N_MAX_BET;//Player의 자본이 N_MAX_BET보다  많이 남아있으면 Player의 배팅액을 랜덤으로 설정할때 N_MAX_BET 밑으로 설정한다는 뜻
+			putbet=N_MAX_BET;//Player의 자본이 N_MAX_BET보다  많이 남아있으면 Player의 배팅액을 랜덤으로 설정할때 N_MAX_BET 밑으로 설정한다는 뜻
 			bet[i]=rand()%putbet+1;  
 		}
 		else//Player의 자본이 N_MAX_BET보다 작게 남아 있으면 남은 모든 금액을 올인하겠다!
@@ -299,6 +303,7 @@ void printCardInitialStatus(void) {
 		printf("-->Player %d     :",i);
 		printCard(cardhold[i][0]);
 		printCard(cardhold[i][1]);
+		printf("\n");
 	}
 	
 }
@@ -321,10 +326,12 @@ int getAction(void) {
 		return 1;	
 	
 }
+
+
 //Decide computer player's go or stop.
 int getActionPlayer(int n_user){
 	
-	calcardsum(n_user);//The sum of the cards for the i-th user will be calculated.
+	//calcardsum(n_user);//The sum of the cards for the i-th user will be calculated.
 	
 	if(calcardsum(n_user)<=17)
 	{
@@ -336,7 +343,7 @@ int getActionPlayer(int n_user){
 		printf("STAY!\n"); 
 		return 2; 
 	}
-		
+}
 
 //Print Card Status
 void printUserCardStatus(int user, int cardcnt) {
@@ -359,10 +366,10 @@ void printUserCardStatus(int user, int cardcnt) {
 //Each time players finish their turn, print each step's results.
 int calcStepResult(int user) {
 	
-	if(cardcnt==2&&calcardsum[user]==21)
+	if(cardcnt[user]==2&&calcardsum(user)==21)
 		printf("Black Jack! Congratulation, You Win!!\n");
 		
-	else if(calcardsum[user]>21)
+	else if(calcardsum(user)>21)
 		printf("DEAD[overflow!] (sum:%d)\n",cardSum[user]);
 		
 	else
@@ -370,6 +377,8 @@ int calcStepResult(int user) {
 	
 	//int cardSum[N_MAX_USER]합은 이 배열에다 저장을 해줌. 
 }
+
+
 //A function that tells the result of the round.
 int checkResult(int n_user) {
 	
@@ -412,6 +421,7 @@ int checkResult(int n_user) {
 	for(i=1;i<n_user;i++)
 	{
 		printf("->%d'th Player's Result:",i);
+		
 		if(cardSum[i]==21&&cardcnt[i]==2)
 		{
 			dollar[i]=dollar[i]+(bet[i]*2);
@@ -445,7 +455,8 @@ int checkWinner() {
 	
 	int i;
 	int k;
-	int windollar;
+	int winner;
+	int maxdollar;
 	
 	printf("Game End!! Your money : $%d,",dollar[0]);
 	printf("Player's money:'");
@@ -459,29 +470,23 @@ int checkWinner() {
 		for(k=0;k<n_user;k++)
 		{
 			if(dollar[i]<dollar[k])
-				windollar=dollar[k];
+			{
+				maxdollar=dollar[k];
+				winner=k;
+			}
+				
 		}
+		if(k==0)
+		{	
+			printf("You Win!!\n");
+		}
+		else
+		{
+			printf("Player %d Win.\n",k);
+		}
+	
 	}
-	// max_dollar = dollar[i] max<dollar[i] max=dollar[i] i==0 i>1 pal--layer[]i
 	
-	/*f(dollar[1]<dollar[0]&&dollar[2]<dollar[0]&&dollar[3]<dollar[0]&&dollar[4]<dollar[0])
-		printf("You Win!! Congratulations~"\n);
-	
-	if else(dollar[0]<dollar[1]&&dollar[2]<dollar[1]&&dollar[3]<dollar[1]&&dollar[4]<dollar[1])
-		printf("Player 1's Win.\n");
-		
-	if else(dollar[0]<dollar[2]&&dollar[1]<dollar[2]&&dollar[3]<dollar[2]&&dollar[4]<dollar[2])
-		printf("Player 2's Win.\n");//근데 만약에 같으면? 남은 자본이?
-	
-	if else(dollar[0]<dollar[3]&&dollar[2]<dollar[3]&&dollar[0]<dollar[3]&&dollar[4]<dollar[3])
-		printf("Player 3's Win.\n"); 
-	
-	if else(dollar[0]<dollar[4]&&dollar[2]<dollar[4]&&dollar[3]<dollar[4]&&dollar[1]<dollar[4])
-		printf("Player 4's Win.\n");
-	
-	if else(dollar[0]=<dollar[1]&&dollar[2]<dollar[1]&&dollar[3]<dollar[1]&&dollar[4]<dollar[1])
-		printf("Player 1's Win.\n");*/
-	//int Winner라는 전역변수를 세워주고 Winner=0,1,
 }// max_dollar = dollar[i] max<dollar[i] max=dollar[i] i==0 i>1 pal--layer[]i
 
 
@@ -516,7 +521,7 @@ int main(int argc, char *argv[]) {
 		//Each time Round starts anew, the variable cardcnt, which refers to the number of cards each player has, is reset to 2.
 		for(k=0;k<n_user;k++)
 		{
-			cardcnt[k]={2,2,2,2,2};
+			cardcnt[k]=2;
 		}	
 
 			
@@ -536,27 +541,36 @@ int main(int argc, char *argv[]) {
 		printf(">>>My Turn!----------\n");
 		printUserCardStatus(0,cardcnt[0]);//처음 받은 두장의 카드를 찍어준다. 
 		getAction(); //Ask go or stop.
-		while(getAction==1)
+		while(getAction()==1)
 		{
 			cardhold[0][cardcnt[0]]=pullCard();//I called function pullCard so, it will be cardcnt++.
 			
 			printUserCardStatus(0,cardcnt[0]);
-			getActioin();		
+			getAction();		
 		}
 		
 		//each player's turn
 		for (i=1;i<n_user;i++) //each player
 		{
+			int result;
+			
 			printf("Player %d Turn!-------------------\n",i);
 			printUserCardStatus(i,cardcnt[i]); 
-			getActionPlayer(i);
-			while(getActionPlayer()==1)
+			
+			/*result = getActionPlayer(i);
+			while(result==1)
 			{	
-				printf("Go\n");
+				printf("Go\ n");
 				cardhold[i][cardcnt[i]]=pullCard();
 				printUserCardStatus(i,cardcnt[i]);
-				getActionPlayer();
-			}
+				result = getActionPlayer(i);
+			}*/
+			//do while문으로 한번 바꿔봐
+			do
+			{
+				result=getActionPlayer(i);
+				
+			} while(result==1);
 			calcStepResult(i);
 			/*while (getAction==0) //do until the player dies or player says stop
 			{
@@ -579,7 +593,10 @@ int main(int argc, char *argv[]) {
 		
 		//result
 		for(j=0;j<n_user;j++)
+		{
 			checkResult(j);
+		}
+			
 		roundIndex++;
 	} while (cardIndex==N_CARDSET*N_CARD);//이거 한번 돌때마다 roundIndex++해줘야돼. 
 	
@@ -588,3 +605,4 @@ int main(int argc, char *argv[]) {
 	
 	return 0;
 }
+
