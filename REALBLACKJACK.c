@@ -320,12 +320,22 @@ int getAction(void) {
 	
 }
 
-int getActionPlayer(int 몇번째 player인지 받아줘.){
+int getActionPlayer(int n_user){
 	
-	int gostop;//This variable saves the player's gostop status.
-	calcardsum(n_user);
-	
-}
+	calcardsum(n_user);//The sum of the cards for the i-th user will be calculated.
+	if(calcardsum(n_user)<=17)
+	{
+		cardcnt[n_user]++;
+		return 1;
+	}//무조건 go함. 
+		
+		
+	else
+	{
+		printf("STAY!\n"); 
+		return 2; 
+	}
+		
 
 
 void printUserCardStatus(int user, int cardcnt) {
@@ -345,13 +355,13 @@ void printUserCardStatus(int user, int cardcnt) {
 // calculate the card sum and see if : 1. under 21, 2. over 21, 3. blackjack
 
 // 이 함수를 쓰기 전에 꼭 calcardsum함수를 먼저 불러줘야돼! 
-int calcStepResult(int cardnum) {
+int calcStepResult(int user) {
 	
-	if(cardcnt==2&&cardSum[cardnum]==21)
+	if(cardcnt==2&&calcardSum[user]==21)
 		printf("Black Jack! Congratulation, You Win!!\n");
 		
-	else if(cardSum[cardnum]>21)
-		printf("DEAD[overflow!] (sum:%d)\n",cardSum[cardnum]);
+	else if(calcardSum[user]>21)
+		printf("DEAD[overflow!] (sum:%d)\n",cardSum[user]);
 		
 	else
 		printf("\n");
@@ -414,15 +424,35 @@ int checkResult(int n_user) {
 int checkWinner() {
 	
 	int i;
+	int maxdollar[n_user];
 	
-	printf("Game End!! Your money : %d,",dollar[0]);
+	printf("Game End!! Your money : $%d,",dollar[0]);
 	printf("Player's money:'");
 	for(i=1;i<n_user;i++)
 	{
-		printf("%d",dollar[i]);
+		printf("$%d",dollar[i]);
 	}
+	// max_dollar = dollar[i] max<dollar[i] max=dollar[i] i==0 i>1 pal--layer[]i
+	
+	/*f(dollar[1]<dollar[0]&&dollar[2]<dollar[0]&&dollar[3]<dollar[0]&&dollar[4]<dollar[0])
+		printf("You Win!! Congratulations~"\n);
+	
+	if else(dollar[0]<dollar[1]&&dollar[2]<dollar[1]&&dollar[3]<dollar[1]&&dollar[4]<dollar[1])
+		printf("Player 1's Win.\n");
+		
+	if else(dollar[0]<dollar[2]&&dollar[1]<dollar[2]&&dollar[3]<dollar[2]&&dollar[4]<dollar[2])
+		printf("Player 2's Win.\n");//근데 만약에 같으면? 남은 자본이?
+	
+	if else(dollar[0]<dollar[3]&&dollar[2]<dollar[3]&&dollar[0]<dollar[3]&&dollar[4]<dollar[3])
+		printf("Player 3's Win.\n"); 
+	
+	if else(dollar[0]<dollar[4]&&dollar[2]<dollar[4]&&dollar[3]<dollar[4]&&dollar[1]<dollar[4])
+		printf("Player 4's Win.\n");
+	
+	if else(dollar[0]=<dollar[1]&&dollar[2]<dollar[1]&&dollar[3]<dollar[1]&&dollar[4]<dollar[1])
+		printf("Player 1's Win.\n");*/
 	//int Winner라는 전역변수를 세워주고 Winner=0,1,
-}
+}// max_dollar = dollar[i] max<dollar[i] max=dollar[i] i==0 i>1 pal--layer[]i
 
 
 
@@ -431,8 +461,6 @@ int main(int argc, char *argv[]) {
 	int max_user;
 	int i;
 	int k;
-	int j;
-	j=2;
 	
 	srand((unsigned)time(NULL));
 	
@@ -477,8 +505,8 @@ int main(int argc, char *argv[]) {
 		getAction(); //Ask go or stop.
 		while(getAction==1)
 		{
-			cardhold[0][j]=pullCard();//I called function pullCard so, it will be cardcnt++.
-			j++;	
+			cardhold[0][cardcnt[0]]=pullCard();//I called function pullCard so, it will be cardcnt++.
+			
 			printUserCardStatus(0,cardcnt[0]);
 			getActioin();		
 		}
@@ -489,23 +517,36 @@ int main(int argc, char *argv[]) {
 			printf("Player %d Turn!-------------------\n",i);
 			printUserCardStatus(i,cardcnt[i]); 
 			getActionPlayer(i);
-			while (getAction==0) //do until the player dies or player says stop
+			while(getActionPlayer()==1)
+			{	
+				printf("Go\n");
+				cardhold[i][cardcnt[i]]=pullCard();
+				printUserCardStatus(i,cardcnt[i]);
+				getActionPlayer();
+			}
+			calcStepResult(i);
+			/*while (getAction==0) //do until the player dies or player says stop
 			{
 				printUserCardStatus(i,cardcnt[i]);//print current card status printUserCardStatus();
 				//check the card status ::: calcStepResult()
-				while(getAction()==0)
-				{//GO? STOP? ::: getAction()
+				while(getActionPlayer()==1)
+				{	
+					printf("Go\n");
+					cardhold[i][cardcnt[i]]=pullCard();
+					printUserCardStatus(i,cardcnt[i]);
+					//GO? STOP? ::: getActionPlayer()
 					//printCard(cardhold[0][0]);
 					//printCard(cardhold[0][1]);
 				}	//printUserCardStatus(i,cardcnt);
 				//check if the turn ends or not
-			}
+			}*/
 			
 		}//이 for문은 컴퓨터들이 돌릴때 쓸거임. 
 		//Server's turn.
 		
 		//result
-		checkResult();
+		for(j=0;j<n_user;j++)
+			checkResult(j);
 		roundIndex++;
 	} while (cardIndex==N_CARDSET*N_CARD);//이거 한번 돌때마다 roundIndex++해줘야돼. 
 	

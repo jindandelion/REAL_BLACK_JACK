@@ -35,9 +35,16 @@ int getAction(void) {
 }
 int getActionPlayer(int n_user){
 	
-	int gostop;//This variable saves the player's gostop status.
 	calcardsum(n_user);//The sum of the cards for the i-th user will be calculated.
-	if(calcardsum(n_user))
+	if(calcardsum(n_user)<=17)//무조건 go함. 
+		cardcnt[n_user]++;
+		return 1;
+		
+	else
+		printf("STAY!\n"); 
+		return 2; 
+		
+	
 	
 }
 void calcardsum(int cardnum){//A function that calculates the sum of the cards.
