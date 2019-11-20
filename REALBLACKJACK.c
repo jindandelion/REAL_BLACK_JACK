@@ -36,7 +36,8 @@ int bet[N_MAX_USER];						//current betting
 int gameEnd = 0; 							//game end flag
 
 //some utility functions
-
+//
+int roundIndex;
 //get an integer input from standard input (keyboard)
 //return : input integer value
 //         (-1 is returned if keyboard input was not integer)
@@ -323,13 +324,12 @@ int getAction(void) {
 int getActionPlayer(int n_user){
 	
 	calcardsum(n_user);//The sum of the cards for the i-th user will be calculated.
+	
 	if(calcardsum(n_user)<=17)
 	{
 		cardcnt[n_user]++;
 		return 1;
 	}//무조건 go함. 
-		
-		
 	else
 	{
 		printf("STAY!\n"); 
@@ -357,10 +357,10 @@ void printUserCardStatus(int user, int cardcnt) {
 // 이 함수를 쓰기 전에 꼭 calcardsum함수를 먼저 불러줘야돼! 
 int calcStepResult(int user) {
 	
-	if(cardcnt==2&&calcardSum[user]==21)
+	if(cardcnt==2&&calcardsum[user]==21)
 		printf("Black Jack! Congratulation, You Win!!\n");
 		
-	else if(calcardSum[user]>21)
+	else if(calcardsum[user]>21)
 		printf("DEAD[overflow!] (sum:%d)\n",cardSum[user]);
 		
 	else
@@ -373,49 +373,67 @@ int checkResult(int n_user) {
 	
 	int i;
 	
-	if(cardSum[n_user]>21)
+	if(cardSum[n_user]>21)//cardSum is array that means sum of each card that holded each player.
 		printf("[[[[[Server Result is .....overflow!!]]]]]\n");
-	else if(cardcount[n_user]==2&&cardSum[n_user==21])//두장의 카드 더했을 때 21이여야지 블랙잭이니깐 어 x[n_user][0]+x[n_user][1]==21 이렇게 바꿔줘야 
+	else if(cardcnt[n_user]==2&&cardSum[n_user==21])//두장의 카드 더했을 때 21이여야지 블랙잭이니깐 어 x[n_user][0]+x[n_user][1]==21 이렇게 바꿔줘야 
 		printf("[[[[[Server Result is .....Black Jack!!]]]]]\n");
 	else
 		printf("[[[[[Server Result is .....%d!!]]]]]\n",cardSum[n_user]);
 		
 		
 	printf("------------ROUND%d's result is...------------",roundIndex);
+	
 	if(cardSum[0]==21&&cardcnt[0]==2)//if player is blackjack,
-		dollar[0]=dollar[0]+(bet[0]*2);
-		printf("->Your Result: BLACKJACK! Congratulations!(sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+		{
+			dollar[0]=dollar[0]+(bet[0]*2);
+			printf("->Your Result: BLACKJACK! Congratulations!(sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+		}
 		
 	else if(cardSum[n_user]>21&&cardSum[0]<22)//if dealer is overflow.
-		dollar[0]=dollar[0];
-		printf("->Your Result: WIN!! Server is overflow. (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+		{
+			dollar[0]=dollar[0];
+			printf("->Your Result: WIN!! Server is overflow. (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+		}
 	
 	else if(cardSum[n_user]==21&&cardcnt[n_user]==2&&cardSum[0]!=21&&cardcnt[0]!=2)//If the dealer is blackjack, player loses the betting amount.
-		dollar[0]=dollar[0]-bet[0];//근데 player가 먼저 블랙잭이면 break;다른 곳에서 해줘야됌. 
-		printf("->Your Result: Lose! Server is BLACKJACK! (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+		{
+			dollar[0]=dollar[0]-bet[0];//근데 player가 먼저 블랙잭이면 break;다른 곳에서 해줘야됌. 
+			printf("->Your Result: Lose! Server is BLACKJACK! (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+		}
 
 	else if(cardSum[0]>cardSum[n_user]&&cardSum[0]<=21)//if user is win
-		dollar[0]=dollar[0]+bet[0];
-		printf("->Your Result: WIN! (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+		{
+			dollar[0]=dollar[0]+bet[0];
+			printf("->Your Result: WIN! (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
+		}
 	
 	for(i=1;i<n_user;i++)
 	{
 		printf("->%d'th Player's Result:",i);
 		if(cardSum[i]==21&&cardcnt[i]==2)
+		{
 			dollar[i]=dollar[i]+(bet[i]*2);
 			printf("Black Jack! (sum:%d) --> $%d \n",cardSum[i],dollar[i]);
+		}
 			
 		else if(cardSum[n_user]>21&&cardSum[i]<22)
+		{
 			dollar[i]=dollar[i]+(bet[i]*2);
 			printf(" Win! Server is overflow! (sum:%d) --> $%d \n",cardSum[i],dollar[i]);
+		}
 			
 		else if(cardSum[n_user]==21&&cardcnt[n_user]==2&&cardSum[i]!=21&&cardcnt[i]!=2)
+		{
 			dollar[i]=dollar[i]-bet[i];
 			printf("lose! Server is BLACKJACK! (sum:%d) --> $%d \n",cardSum[i],dollar[i]);
+		}	
 		
 		else if(cardSum[n_user]<cardSum[i]&&cardSum[i]<=21)
+		{
 			dollar[i]=dollar[i]+bet[i];
 			printf("WIN! (sum:%d) --> $%d \n",cardSum[i],dollar[i]);
+		}	
+		
 			
 	}
 }	
@@ -424,13 +442,23 @@ int checkResult(int n_user) {
 int checkWinner() {
 	
 	int i;
-	int maxdollar[n_user];
+	int k;
+	int windollar;
 	
 	printf("Game End!! Your money : $%d,",dollar[0]);
 	printf("Player's money:'");
 	for(i=1;i<n_user;i++)
 	{
 		printf("$%d",dollar[i]);
+	}
+	//maxdollar[i]==dollar[i];
+	for(i=0;i<n_user;i++)
+	{
+		for(k=0;k<n_user;k++)
+		{
+			if(dollar[i]<dollar[k])
+				windollar=dollar[k];
+		}
 	}
 	// max_dollar = dollar[i] max<dollar[i] max=dollar[i] i==0 i>1 pal--layer[]i
 	
@@ -461,6 +489,7 @@ int main(int argc, char *argv[]) {
 	int max_user;
 	int i;
 	int k;
+	int j;
 	
 	srand((unsigned)time(NULL));
 	
@@ -484,7 +513,9 @@ int main(int argc, char *argv[]) {
 	do {
 		//Each time Round starts anew, the variable cardcnt, which refers to the number of cards each player has, is reset to 2.
 		for(k=0;k<n_user;k++)
+		{
 			cardcnt[k]={2,2,2,2,2};
+		}	
 
 			
 		printf("--------------------------------------------\n");

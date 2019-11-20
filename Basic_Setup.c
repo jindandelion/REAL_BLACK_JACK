@@ -60,7 +60,7 @@ void calcardsum(int cardnum){//A function that calculates the sum of the cards.
 	
 	return 0;
 } 
-
+calcardSum
 
 
 
