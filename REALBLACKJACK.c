@@ -20,9 +20,9 @@
 int CardTray[N_CARDSET*N_CARD]; 
 int cardIndex = 0;	//얘는 그냥 변수						
 int cardnum;
-int cardnumcnt;//카드트레이에서 0부터 N_CARDSET*N_CARD-1까지 의 배열 요소 중 몇번째 까지 썼는지 카운터해주는 변수. 
+//int cardnumcnt;//카드트레이에서 0부터 N_CARDSET*N_CARD-1까지 의 배열 요소 중 몇번째 까지 썼는지 카운터해주는 변수. 
 //int cardcnt;//각 player가 갖고있는 카드의 갯수가 몇개인지 세주는 변수. 
-int cardcnt[N_MAX_USER]={2,2,2,2,2};//cardcount++Pullcard한번 받을 때 마다 이렇게 해줌. 
+int cardcnt[N_MAX_USER]={2,2,2,2,2};//Variables that count the number of cards each player has.
 
 //player info
 int dollar[N_MAX_USER]={50,50,50,50,50};//dollars that each player has. At the beginning of the game, each player's money was initialized at $50.
@@ -56,15 +56,16 @@ int getIntegerInput(void) {
 //card processing functions ---------------
 
 //calculate the actual card number in the blackjack game
-int getCardNum(int cardnum) {
+int getCardNum(int cardnum) { 
 	
 	int i;
 
 	switch(cardnum%13)
 	{
 		case 0:
-			
+			/******************************************************************************************************/
 			cardnum=11;//또는 11 .여기 안에다 if문 써도 되는건가? 쓰면 if(CardSum+11>21) cardnum=1; else cardnum=11 
+			/*********************************************************************************************************/
 			break;
 		case 10:
 		case 11:
@@ -98,7 +99,8 @@ int Card_Sum(cardnum){
 			getCardNum(cardhold[1][i]);
 			sumofcard=sumofcard+getCardNum(cardhold[1][i]);
 			******************************************************************************/
-void calcardsum(int cardnum){//A function that calculates the sum of the cards.
+//A function that calculates the sum of the cards.
+void calcardsum(int cardnum){
 	
 	int i;
 	int sum;
@@ -187,7 +189,7 @@ int mixCardTray(void) {
 }
 int puca;//pullCard함수에서 반환 값이 하나 나갈때마다 배열의 다음 값이 나갈 수 있게해주는 변수를 전역변수로 설정해 주엇다. 
 //get one card from the tray
-int pullCard(void) {	//카드를 하나씩 꺼내주는 함수 
+int pullCard(void) {
 	
 	int result;
 	result=CardTray[puca];
@@ -202,6 +204,7 @@ int pullCard(void) {	//카드를 하나씩 꺼내주는 함수
 
 //player settiing
 
+//Input how many players play game.
 int configUser(void) {
 	
 	do
@@ -263,10 +266,6 @@ void offerCards(void) {
 	for (i=0;i<n_user;i++)
 	{
 		cardhold[i][0] = pullCard();
-		/*****************************************************************
-		pullcard가 숫자 내보내면 cardhold에 숫자가 저장되겠지?
-		그럼 printcard(cardhold[][])이런식으로 해서 카드 프린트 하는거 ㅇㅎ 
-		********************************************************************/
 	}
 	for (i=0;i<n_user;i++)
 	{
@@ -284,25 +283,27 @@ void offerCards(void) {
 //print initial card status
 void printCardInitialStatus(void) {
 	int i;
-	
+	//Print dealer's card
 	printf("-->Server       :");
 	printf("X ");
-	printCard(cardhold[n_user][1]);//n_user 즉, 만약 n_user에 3이 입력이 됬을 때 [0]은 사용자의 카드,[1]은 player[1]의 카드 [3]은 딜러의카드이다. 
+	printCard(cardhold[n_user][1]); 
 	printf("\n");
+	//Print user's card
 	printf("-->You          :");
 	printCard(cardhold[0][0]);
-	printCard(cardhold[0][1]);//즉 이건 사용자의 카드 
+	printCard(cardhold[0][1]);
 	printf("\n");
+	//Print computer player's card
 	for(i=1;i<n_user;i++)
 	{
 		printf("-->Player %d     :",i);
 		printCard(cardhold[i][0]);
 		printCard(cardhold[i][1]);
-	}//이건 컴퓨터의 카드들 이다. 
+	}
 	
 }
 
-
+//Ask User's hope. Go or stop.
 int getAction(void) {
 	
 	int gostop;
@@ -320,7 +321,7 @@ int getAction(void) {
 		return 1;	
 	
 }
-
+//Decide computer player's go or stop.
 int getActionPlayer(int n_user){
 	
 	calcardsum(n_user);//The sum of the cards for the i-th user will be calculated.
@@ -337,7 +338,7 @@ int getActionPlayer(int n_user){
 	}
 		
 
-
+//Print Card Status
 void printUserCardStatus(int user, int cardcnt) {
 	//그냥 cardcnt라는 변수가 왜 필요한건지 모르겠
 	//가지고 있는 카드 개수만큼 프린트를 해줘여 되니까
@@ -354,7 +355,8 @@ void printUserCardStatus(int user, int cardcnt) {
 
 // calculate the card sum and see if : 1. under 21, 2. over 21, 3. blackjack
 
-// 이 함수를 쓰기 전에 꼭 calcardsum함수를 먼저 불러줘야돼! 
+//Before Use calcStepResult function have to call calcardSum function. 
+//Each time players finish their turn, print each step's results.
 int calcStepResult(int user) {
 	
 	if(cardcnt==2&&calcardsum[user]==21)
@@ -368,7 +370,7 @@ int calcStepResult(int user) {
 	
 	//int cardSum[N_MAX_USER]합은 이 배열에다 저장을 해줌. 
 }
-
+//A function that tells the result of the round.
 int checkResult(int n_user) {
 	
 	int i;
@@ -438,7 +440,7 @@ int checkResult(int n_user) {
 	}
 }	
 
-
+//Check The final WInner!
 int checkWinner() {
 	
 	int i;
