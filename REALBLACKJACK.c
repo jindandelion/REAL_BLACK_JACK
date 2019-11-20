@@ -16,13 +16,14 @@
 #define N_MIN_ENDCARD		30//배열의 크기를 지시자로 만들어진 기호상수로 지정 
 
 
+
 //card tray object
 int CardTray[N_CARDSET*N_CARD]; 
 int cardIndex = 0;	//얘는 그냥 변수						
 int cardnum;
 //int cardnumcnt;//카드트레이에서 0부터 N_CARDSET*N_CARD-1까지 의 배열 요소 중 몇번째 까지 썼는지 카운터해주는 변수. 
 //int cardcnt;//각 player가 갖고있는 카드의 갯수가 몇개인지 세주는 변수. 
-int cardcnt[N_MAX_USER]={2,2,2,2,2};//Variables that count the number of cards each player has.
+int cardcnt[N_MAX_USER]={1,1,1,1,1};//Variables that count the number of cards each player has.
 
 //player info
 int dollar[N_MAX_USER]={50,50,50,50,50};//dollars that each player has. At the beginning of the game, each player's money was initialized at $50.
@@ -58,8 +59,6 @@ int getIntegerInput(void) {
 //calculate the actual card number in the blackjack game
 int getCardNum(int cardnum) { 
 	
-	int i;
-
 	switch(cardnum%13)
 	{
 		case 0:
@@ -210,11 +209,11 @@ int configUser(void) {
 	
 	do
 	{
-		printf("Input the number of players(MAX:5)\n");
+		printf("Input the number of players(MAX:%d)\n",N_MAX_USER);
 		//scanf("%d",&n_user);
 		n_user=getIntegerInput();
 		if(n_user>=6||n_user<=0)
-			printf("***Set the number of players at least 1 to 5 or less.***\n"); 
+			printf("***Set the number of players at least 1 to %d or less.***",N_MAX_USER); 
 		//-1이 들어가있으면 사용자가 숫자아닌걸 넣은거니까.. 내가 원하는 값이 아니면 다시 넣어라ㅏ! 다시 넣어라 출력..경고메세지 넣어. 
 	}while(n_user>=6||n_user<=0);
 		
@@ -248,7 +247,7 @@ int betDollar(void)
 		}
 		else//Player의 자본이 N_MAX_BET보다 작게 남아 있으면 남은 모든 금액을 올인하겠다!
 		{
-			bet[i]=dollar[i]; 
+			bet[i]=(rand()%dollar[i])+1;
 		}
 			//(0<putbet||putbet<dollar[i]);/**이거 약간 putbet이 0보다 크고 dollar[i]즉 가진 자본만큼 보단 작야아된다고 하고싶은데 이게 맞나*/
 			//bet[i]=rand()%putbet+1;
@@ -336,6 +335,7 @@ int getActionPlayer(int n_user){
 	if(calcardsum(n_user)<=17)
 	{
 		cardcnt[n_user]++;
+		printf("GO!\n");
 		return 1;
 	}//무조건 go함. 
 	else
@@ -346,16 +346,20 @@ int getActionPlayer(int n_user){
 }
 
 //Print Card Status
-void printUserCardStatus(int user, int cardcnt) {
+void printUserCardStatus(int user, int number) {
 	//그냥 cardcnt라는 변수가 왜 필요한건지 모르겠
 	//가지고 있는 카드 개수만큼 프린트를 해줘여 되니까
-	
+	//printUserCardStatus(i,cardcnt[i]); 
 	int i;
 	
 	printf("   -> card : ");
 	
-	for (i=0;i<cardcnt;i++)
+	//for (i=0;i<cardcnt[number];i++)
+	for (i=0;i<number;i++)
+	{
 		printCard(cardhold[user][i]);
+	}
+	
 
 	printf("\t ::: ");
 }
@@ -540,13 +544,13 @@ int main(int argc, char *argv[]) {
 		//user turn
 		printf(">>>My Turn!----------\n");
 		printUserCardStatus(0,cardcnt[0]);//처음 받은 두장의 카드를 찍어준다. 
-		getAction(); //Ask go or stop.
-		while(getAction()==1)
+		
+		//getAction(); //Ask go or stop.
+		while(getAction()==0)
 		{
 			cardhold[0][cardcnt[0]]=pullCard();//I called function pullCard so, it will be cardcnt++.
-			
-			printUserCardStatus(0,cardcnt[0]);
-			getAction();		
+			cardcnt[0]++;
+			printUserCardStatus(0,cardcnt[0]);	
 		}
 		
 		//each player's turn
