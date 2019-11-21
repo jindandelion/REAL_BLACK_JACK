@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define N_CARDSET			1
+#define N_CARD				52
+#define N_DOLLAR			50
+
+
+#define N_MAX_CARDNUM		13
+#define N_MAX_USER			5
+#define N_MAX_CARDHOLD		10
+#define N_MAX_GO			17
+#define N_MAX_BET			5
+//card processing functions ---------------
+
+//calculate the actual card number in the blackjack game
+int getCardNum(int cardnum) { 
+	
+	switch(cardnum%13)
+	{
+		case 0:
+			cardnum=11;
+			break;
+			
+		case 10:
+		case 11:
+		case 12:
+			cardnum=10;
+			break;
+			
+		default:
+			cardnum=(cardnum%13)+1;
+			break;
+		
+	}
+
+}
+//A function that calculates the sum of the cards.
+int calcardsum(int user){
+	//getCardNum(int cardnum)
+	
+	int i;
+	
+	for(i=0;i<cardcnt[user];i++)
+	{	
+		cardSum[user]=cardSum[user]+getCardNum(cardhold[user][i]);
+	}
+	
+	
+	return cardSum[user];
+} 
+	
+//print the card information (e.g. DiaA)
+void printCard(int cardnum) { 
+	
+	if(cardnum/13==0)
+		printf("¢À");
+	else if(cardnum/13==1) 
+		printf("¡ß");
+	else if(cardnum/13==2)
+		printf("¢¾"); 
+	else if(cardnum/13==3)
+		printf("¢¼"); 
+		
+	switch(cardnum%13)
+	{
+		case 0:
+			printf("A ");
+			break; 
+			
+		case 10:
+			printf("J ");
+			break;
+			
+		case 11:
+			printf("Q ");
+			break;
+		
+		case 12:
+			printf("K ");
+			break;
+			
+		default:
+			printf("%d ",(cardnum%13)+1);
+			break;
+	}
+	
+}
+
+
+
