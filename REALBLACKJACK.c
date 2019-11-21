@@ -15,26 +15,26 @@
 
 
 //card tray object
-extern int CardTray[N_CARDSET*N_CARD]; 
-extern int cardIndex /*= 0*/;							
-extern int cardnum;
+int CardTray[N_CARDSET*N_CARD]; 
+int cardIndex = 0;							
+int cardnum;
 
-extern int cardcnt[N_MAX_USER]/*={1,1,1,1,1}*/;//Variables that count the number of cards each player has.
+int cardcnt[N_MAX_USER]={1,1,1,1,1};//Variables that count the number of cards each player has.
 
 //player info
-extern int dollar[N_MAX_USER]/*={50,50,50,50,50}*/;//dollars that each player has. At the beginning of the game, each player's money was initialized at $50.
-extern int user;
-extern int n_user;								//number of users
+int dollar[N_MAX_USER]={50,50,50,50,50};//dollars that each player has. At the beginning of the game, each player's money was initialized at $50.
+int user;
+int n_user;								//number of users
 
 //play yard information
-extern int cardhold[N_MAX_USER+1][N_MAX_CARDHOLD];	//cards that currently the players hold
-extern int cardSum[N_MAX_USER]/*{0,0,0,0,0}*/;					//sum of the cards
-extern int bet[N_MAX_USER];						//current betting 
-extern int gameEnd /*= 0*/; 							//game end flag
+int cardhold[N_MAX_USER+1][N_MAX_CARDHOLD];	//cards that currently the players hold
+int cardSum[N_MAX_USER]={0,0,0,0,0};					//sum of the cards
+int bet[N_MAX_USER];						//current betting 
+int gameEnd = 0; 							//game end flag
 
 //some utility functions
 //
-extern int roundIndex/*=1*/;
+int roundIndex=1;
 //get an integer input from standard input (keyboard)
 //return : input integer value
 //         (-1 is returned if keyboard input was not integer)

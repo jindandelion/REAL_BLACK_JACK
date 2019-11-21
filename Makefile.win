@@ -27,5 +27,14 @@ $(BIN): $(OBJ)
 REALBLACKJACK.o: REALBLACKJACK.c
 	$(CC) -c REALBLACKJACK.c -o REALBLACKJACK.o $(CFLAGS)
 
+cardprocess.o: cardprocess.c
+	$(CC) -c cardprocess.c -o cardprocess.o $(CFLAGS)
+
+arraycontroller.o: arraycontroller.c
+	$(CC) -c arraycontroller.c -o arraycontroller.o $(CFLAGS)
+
+PlayGame.o: PlayGame.c
+	$(CC) -c PlayGame.c -o PlayGame.o $(CFLAGS)
+
 CheckResult.o: CheckResult.c
 	$(CC) -c CheckResult.c -o CheckResult.o $(CFLAGS)
