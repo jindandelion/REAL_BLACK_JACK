@@ -81,6 +81,7 @@ int getCardNum(int cardnum) { //cardnum가 즉 pullCard에 저장된 수,아그러면 아...
 }
 //A function that calculates the sum of the cards.
 int calcardsum(int user){
+	//getCardNum(int cardnum)
 	
 	int i;
 	int result; 
@@ -316,7 +317,7 @@ int getAction(void) {
 
 //Decide computer player's go or stop.
 int getActionPlayer(int n_user){
-	
+	//getCardNum(int cardnum)
 	//calcardsum(n_user);//The sum of the cards for the i-th user will be calculated.
 	
 	if(calcardsum(n_user)<=17)
@@ -334,8 +335,6 @@ int getActionPlayer(int n_user){
 
 //Print Card Status
 void printUserCardStatus(int user, int number) {
-	//그냥 cardcnt라는 변수가 왜 필요한건지 모르겠
-	//가지고 있는 카드 개수만큼 프린트를 해줘여 되니까
 	//printUserCardStatus(i,cardcnt[i]); 
 	int i;
 	
@@ -355,7 +354,7 @@ void printUserCardStatus(int user, int number) {
 
 //Before Use calcStepResult function have to call calcardSum function. 
 //Each time players finish their turn, print each step's results.
-int calcStepResult(/*int user*/) {
+int calcStepResult(int user) {
 	
 	
 	if(cardcnt[user]==2&&calcardsum(user)==21)
@@ -365,7 +364,7 @@ int calcStepResult(/*int user*/) {
 		printf("DEAD[overflow!] (sum:%d)\n",cardSum[user]);
 		
 	else
-		printf("STOP\n");
+		printf("\n");
 	
 	//int cardSum[N_MAX_USER]합은 이 배열에다 저장을 해줌. 
 }
@@ -375,13 +374,17 @@ int calcStepResult(/*int user*/) {
 int checkResult(int user) {
 	
 	int i;
+	int blackjack;//if server is blackjack, return 1; so not blackjack player change lose.
 	
-	if(cardSum[user]>21)//cardSum is array that means sum of each card that holded each player.
+	if(cardSum[n_user]>21)//cardSum is array that means sum of each card that holded each player.
 		printf("[[[[[Server Result is .....overflow!!]]]]]\n");
 		
-	else if(cardcnt[user]==2&&cardSum[user==21])//두장의 카드 더했을 때 21이여야지 블랙잭이니깐 어 x[n_user][0]+x[n_user][1]==21 이렇게 바꿔줘야 
+	else if(cardcnt[n_user]==2&&cardSum[n_user]==21)//두장의 카드 더했을 때 21이여야지 블랙잭이니깐 어 x[n_user][0]+x[n_user][1]==21 이렇게 바꿔줘야 
+	{
 		printf("[[[[[Server Result is .....Black Jack!!]]]]]\n");
-		
+		blackjack=1;
+	}
+				
 	else
 		printf("[[[[[Server Result is .....%d!!]]]]]\n",cardSum[n_user]);
 		
@@ -400,7 +403,7 @@ int checkResult(int user) {
 			printf("->Your Result: WIN!! Server is overflow. (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
 		}
 	
-	else if(cardSum[n_user]==21&&cardcnt[n_user]==2&&cardSum[0]!=21&&cardcnt[0]!=2)//If the dealer is blackjack, player loses the betting amount.
+	else if(cardSum[n_user]==21&&cardcnt[n_user]==2&&cardSum[0]!=21&&cardcnt[0]!=2||blackjack==1)//If the dealer is blackjack, player loses the betting amount.
 		{
 			dollar[0]=dollar[0]-bet[0];//근데 player가 먼저 블랙잭이면 break;다른 곳에서 해줘야됌. 
 			printf("->Your Result: Lose! Server is BLACKJACK! (sum:%d)-->$%d\n",cardSum[0],dollar[0]);
@@ -572,7 +575,9 @@ int main(int argc, char *argv[]) {
 			}
 			
 		}
+		calcStepResult(0);
 		//each player's turn
+		
 		for (i=1;i<n_user;i++) //each player
 		{
 			gAPresult=getActionPlayer(i);
@@ -602,29 +607,52 @@ int main(int argc, char *argv[]) {
 					printf("DEAD(overflow)!");
 					break;
 				}
-			}
-			/*do
-			{
-				result=getActionPlayer(i);
 				
-			} while(result==1);*/
-			calcStepResult(i);
+				calcStepResult(i);
+			}
+			
+			
+			//calcStepResult(i);
 			
 		}//이 for문은 컴퓨터들이 돌릴때 쓸거임. 
 		//Server's turn.
 		//Endgame 다 곱해서 endgame 0 cardcnt[]<51 
 		//result
-		for(j=0;j<n_user;j++)
-		{
-			checkResult(j);
-		}
-			
+		
+		//*************여기다 server게임하는 것도 코드 짜줘야됌. ㅈㅍ. 
+		printf("\n\n>>> Server's Turn!-------------------\n");
+		printUserCardStatus(n_user,cardcnt[n_user]); 
+		
+		gAPresult=getActionPlayer(n_user);
+		
+		while(gAPresult==1)
+		{	
+			if(gAPresult==0)
+			{
+				printf("GO!");
+				cardhold[n_user][cardcnt[n_user]]=pullCard();
+				cardcnt[n_user]++;
+				printUserCardStatus(n_user,cardcnt[n_user]);
+				
+			}
+			else if(cardSum[n_user]>=17)
+			{
+				printf("STOP!");
+				break;
+			}
+			else if(cardSum[n_user]>21)
+			{
+				printf("DEAD(overflow)!");
+				break;
+			}
+			if(dollar[i]==0)
+				gameEnd=0;
+		}	
 		roundIndex++;
-	} while (gameEnd == 0/*cardIndex==N_CARDSET*N_CARD||dollor[0]==0*//*Endgame==0*/);//이거 한번 돌때마다 roundIndex++해줘야돼. 
+	} while (gameEnd == 0);//이거 한번 돌때마다 roundIndex++해줘야돼. 
 	
 	checkWinner();
 	
 	
 	return 0;
 }
-//진짜 못하겠어 아아아 난 졸려 나도 나오늘 저거배웠다 논리회로.거지같아 아니 나 궁금한거있어 ㅋ 
