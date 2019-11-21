@@ -254,7 +254,10 @@ int main(int argc, char *argv[]) {
 		checkResult(n_user);
 		
 		roundIndex++;
-	} while (gameEnd == 0);
+		
+		if(gameEnd==1)
+			break;
+	} while (1);
 	
 	checkWinner();
 	
