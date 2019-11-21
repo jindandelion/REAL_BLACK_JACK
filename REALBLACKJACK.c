@@ -99,6 +99,8 @@ int main(int argc, char *argv[]) {
 		printf(">>> My Turn!-------------------\n");
 		printUserCardStatus(0,cardcnt[0]);//first, print initial card.
 		
+	
+		
 		int gAresult;//Variable that stored getAction Result.
 		int gAPresult;//Variable that stored getActionPlayer's Result.
 		int cardsumofP;//Stored cardsum of Players
@@ -107,36 +109,38 @@ int main(int argc, char *argv[]) {
 		while(1)
 		{	
 		
-			gAresult=getAction();
+			cardSum[0]=0;
+			//gAresult=getAction();
 			
-			cardsumofU=calcardsum(0);
+			calcardsum(0);
+			printf("sum: %d ",cardSum[0]);
 			
-			
-			if(cardsumofU>21)
+			if(cardSum[0]>21)
 			{
 				printf("DEAD!! overflow!\n");
-				printf("sum: %d",cardsumofU);
 				break;
 			}
-			else if(cardcnt[0]==2&&cardsumofU==21)
+			else if(cardcnt[0]==2&&cardSum[0]==21)
 			{
 				printf("BLACKJACK!!\n");
 				printf("sum: %d",cardsumofU);
 				break;
 			}
+			gAresult=getAction();
 			
-			else if(gAresult==0)
+			if(gAresult==0)
 			{	
 				printf("GO!\n");
 				cardhold[0][cardcnt[0]]=pullCard();
 				cardcnt[0]++; 
-				printUserCardStatus(0,cardcnt[0]);	
-				printf("sum: %d",cardsumofU);
+				printUserCardStatus(0,cardcnt[0]);
+				/*calcardsum(0);	
+				printf("sum: %d",cardSum[0]);*/
 			}
 			else if(gAresult==1)
 			{
 				printf("STOP!\n");
-				printf("sum: %d ",cardsumofU);
+				printf("sum: %d ",cardSum[0]);
 				break;
 			}
 			
@@ -147,32 +151,34 @@ int main(int argc, char *argv[]) {
 		for (i=1;i<n_user;i++) //each player turn start!
 		{
 			printf("\n\n>>> Player %d Turn!-------------------\n",i);
-			printUserCardStatus(i,cardcnt[i]); 
 			
 			while(1)
 			{
-				gAPresult=getActionPlayer(i);
+				//gAPresult=getActionPlayer(i);
+				printUserCardStatus(i,cardcnt[i]);
+				cardSum[i]=0;
+				calcardsum(i);//Stored cardsum of Player's
+				printf("sum : %d  ",cardSum[i]);
 				
-				cardsumofP=calcardsum(i);//Stored cardsum of Player's
-				
-				if(gAPresult==0)
+				if(cardSum[i]>21)
+				{
+					printf("DEAD(overflow)\n!");
+					break;
+				}
+				else if(cardSum[i]<17)
 				{
 					printf("GO!\n");
 					cardhold[i][cardcnt[i]]=pullCard();
 					cardcnt[i]++;
-					printUserCardStatus(i,cardcnt[i]);
-					printf("sum: %d",cardsumofP);
 				}
-				else if(cardsumofP>=17)
+				else if(cardSum[i]==21&&cardcnt[i]==2)
 				{
-					printf("STOP!\n");
-					printf("sum: %d",cardsumofP);
+					printf("BLACKJACK!\n");
 					break;
 				}
-				else if(/*cardSum[i]*/cardsumofP>21)
+				else if(cardSum[i]>=17)
 				{
-					printf("DEAD(overflow)\n!");
-					printf("sum: %d",cardsumofP);
+					printf("STOP!\n");
 					break;
 				}
 				

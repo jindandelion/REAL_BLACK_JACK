@@ -88,20 +88,20 @@ int checkResult(int user) {
 			dollar[i]=dollar[i]+(bet[i]*2);
 			printf("->%d'th Player's Result: Black Jack! (sum:%d) --> $%d \n",i,cardSum[i],dollar[i]);
 		}
-			
+		//server is overflow but, player not overflow.	
 		else if(cardSum[user]>21&&cardSum[i]<22)
 		{
-			dollar[i]=dollar[i]+(bet[i]*2);
+			dollar[i]=dollar[i]+bet[i];
 			printf("->%d'th Player's Result: Win! Server is overflow! (sum:%d) --> $%d \n",i,cardSum[i],dollar[i]);
 		}
 			
-		else if(cardSum[user]==21&&cardcnt[user]==2&&cardSum[i]!=21&&cardcnt[i]!=2)
+		else if(cardSum[user]==21&&cardcnt[user]==2)
 		{
 			dollar[i]=dollar[i]-bet[i];
 			printf("->%d'th Player's Result: lose! Server is BLACKJACK! (sum:%d) --> $%d \n",i,cardSum[i],dollar[i]);
 		}	
 		
-		else if(cardSum[user]<cardSum[i]&&cardSum[i]<=21)
+		else if(cardSum[user]<=cardSum[i]&&cardSum[i]<=21)
 		{
 			dollar[i]=dollar[i]+bet[i];
 			printf("->%d'th Player's Result: WIN! (sum:%d) --> $%d \n",i,cardSum[i],dollar[i]);

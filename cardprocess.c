@@ -44,17 +44,17 @@ int getCardNum(int cardnum) {
 	switch(cardnum%13)
 	{
 		case 0:
-			cardnum=11;
+			return 11;
 			break;
 			
 		case 10:
 		case 11:
 		case 12:
-			cardnum=10;
+			return 10;
 			break;
 			
 		default:
-			cardnum=(cardnum%13)+1;
+			return ((cardnum%13)+1);
 			break;
 		
 	}
@@ -65,7 +65,7 @@ int calcardsum(int user){
 	//getCardNum(int cardnum)
 	
 	int i;
-	
+	cardSum[user]=0;
 	for(i=0;i<cardcnt[user];i++)
 	{	
 		cardSum[user]=cardSum[user]+getCardNum(cardhold[user][i]);
