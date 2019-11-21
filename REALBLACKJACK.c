@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 	//Game start --------
 	do {
 		//Each time Round starts anew, the variable cardcnt, which refers to the number of cards each player has, is reset to 2.
-		for(i=0;i<n_user;i++)
+		for(i=0;i<=n_user;i++)
 		{
 			cardcnt[i]=2;
 		}	
@@ -89,9 +89,16 @@ int main(int argc, char *argv[]) {
 
 		printf("-----------------BETTING STEP---------------\n");
 		betDollar();
+		
 		printf("--------------------------------------------\n\n");
 		printf("----------------CARD OFFERING---------------\n");
 		offerCards(); //1. give cards to all the players,//offering initial 2 cards
+		
+		if(cardIndex>N_CARDSET*N_CARD)
+		{
+			gameEnd=1;
+			break;
+		}
 		printCardInitialStatus();//print card initial status();
 		
 		printf("\n---------------- GAME start ----------------\n");
@@ -134,8 +141,11 @@ int main(int argc, char *argv[]) {
 				cardhold[0][cardcnt[0]]=pullCard();
 				cardcnt[0]++; 
 				printUserCardStatus(0,cardcnt[0]);
-				/*calcardsum(0);	
-				printf("sum: %d",cardSum[0]);*/
+				if(cardIndex>N_CARDSET*N_CARD)
+				{
+					gameEnd=1;
+					break;
+				}
 			}
 			else if(gAresult==1)
 			{
@@ -169,6 +179,11 @@ int main(int argc, char *argv[]) {
 				{
 					printf("GO!\n");
 					cardhold[i][cardcnt[i]]=pullCard();
+					if(cardIndex>N_CARDSET*N_CARD)
+					{
+						gameEnd=1;
+						break;
+					}
 					cardcnt[i]++;
 				}
 				else if(cardSum[i]==21&&cardcnt[i]==2)
@@ -189,35 +204,52 @@ int main(int argc, char *argv[]) {
 		//Server's turn.
 		printf("\n\n>>> Server's Turn!-------------------\n");
 		
-		printUserCardStatus(n_user,cardcnt[n_user]); 
-		
-		gAPresult=getActionPlayer(n_user);
-		
-		while(gAPresult==1)
-		{	
-			if(gAPresult==0)
+		while(1)
 			{
-				printf("GO!");
-				cardhold[n_user][cardcnt[n_user]]=pullCard();
-				cardcnt[n_user]++;
 				printUserCardStatus(n_user,cardcnt[n_user]);
+				cardSum[n_user]=0;
+				calcardsum(n_user);//Stored cardsum of Player's
+				printf("sum : %d  ",cardSum[n_user]);
 				
-			}
-			else if(cardSum[n_user]>=17)
+				if(cardSum[n_user]>21)
+				{
+					printf("DEAD(overflow)\n!");
+					break;
+				}
+				else if(cardSum[n_user]<17)
+				{
+					printf("GO!\n");
+					cardhold[n_user][cardcnt[n_user]]=pullCard();
+					if(cardIndex>N_CARDSET*N_CARD)
+					{
+						gameEnd=1;
+						break;
+					}
+					cardcnt[n_user]++;
+				}
+				else if(cardSum[n_user]==21&&cardcnt[n_user]==2)
+				{
+					printf("BLACKJACK!\n");
+					break;
+				}
+				else if(cardSum[n_user]>=17)
+				{
+					printf("STOP!\n");
+					break;
+				}
+				
+			}	
+		
+		for(i=0;i<n_user;i++)
+		{
+			if(dollar[i]==0)
 			{
-				printf("STOP!");
-				break;
-			}
-			else if(cardSum[n_user]>21)
-			{
-				printf("DEAD(overflow)!");
-				break;
+				gameEnd=1;
+				printf("Player %d bankrupt(Player 0 is Y0u)\n",i);
+				
 			}
 			
-				
-		}	
-		if(dollar[i]==0)
-			gameEnd=0;
+		}
 			
 		checkResult(n_user);
 		

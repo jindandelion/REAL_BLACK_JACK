@@ -54,6 +54,7 @@ int checkResult(int user) {
 		
 		
 	printf("\n\n------------ROUND%d's result is...------------\n\n",roundIndex);
+
 	/*--------------This is Check the User's REsult------------------*/
 	if(cardSum[0]==21&&cardcnt[0]==2)//if player is blackjack,
 		{
@@ -88,8 +89,13 @@ int checkResult(int user) {
 			dollar[i]=dollar[i]+(bet[i]*2);
 			printf("->%d'th Player's Result: Black Jack! (sum:%d) --> $%d \n",i,cardSum[i],dollar[i]);
 		}
-		//server is overflow but, player not overflow.	
-		else if(cardSum[user]>21&&cardSum[i]<22)
+		//server is overflow but, player not overflow.
+		else if(cardSum[i]>21)
+		{
+			dollar[i]=dollar[i]-bet[i];
+			printf("->%d'th Player's Result:Lose!! overflow (sum:%d) --> $%d \n",i,cardSum[i],dollar[i]);
+			}	
+		else if(cardSum[user]>21)
 		{
 			dollar[i]=dollar[i]+bet[i];
 			printf("->%d'th Player's Result: Win! Server is overflow! (sum:%d) --> $%d \n",i,cardSum[i],dollar[i]);
@@ -120,10 +126,11 @@ int checkWinner() {
 	int maxdollar;
 	
 	printf("Game End!! Your money : $%d,",dollar[0]);
+	
 	printf("Player's money:'");
 	for(i=1;i<n_user;i++)
 	{
-		printf("$%d",dollar[i]);
+		printf("$%d  ",dollar[i]);
 	}
 	//Check who is winner.
 	for(i=0;i<n_user;i++)
@@ -137,13 +144,13 @@ int checkWinner() {
 			}
 				
 		}
-		if(k==0)
+		if(winner==0)
 		{	
 			printf("You Win!!\n");
 		}
 		else
 		{
-			printf("Player %d Win.\n",k);
+			printf("Player %d Win.\n",winner);
 		}
 	
 	}
