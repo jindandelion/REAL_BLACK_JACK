@@ -144,15 +144,16 @@ int checkWinner() {
 			}
 				
 		}
-		if(winner==0)
-		{	
-			printf("You Win!!\n");
-		}
-		else
-		{
-			printf("Player %d Win.\n",winner);
-		}
 	
+	}
+
+	if(winner==0)
+	{	
+		printf("\nYou Win!!\n");
+	}
+	else
+	{
+		printf("\nPlayer %d Win.\n",winner);
 	}
 	
 }
